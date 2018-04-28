@@ -1,0 +1,3 @@
+#!/bin/sh
+VBOX_DIR=$(nix-build '<nixpkgs/nixos>' -A config.system.build.virtualBoxOVA -I nixos-config=lib/virtualbox.nix -I nixcfg=config.nix)
+echo $VBOX_DIR/*.ova
