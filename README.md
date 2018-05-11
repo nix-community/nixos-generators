@@ -13,5 +13,11 @@ we currently have following generators:
 format | script
 --- | ---
 iso | bin/make-iso
-virtualbox | bin/make-virtualbox
 openstack | bin/make-openstack
+virtualbox | bin/make-virtualbox
+
+we also have following runnsers:
+
+platform | script
+--- | ---
+qemu-kvm | bin/run-vm
