@@ -16,7 +16,7 @@ iso | bin/make-iso
 openstack | bin/make-openstack
 virtualbox | bin/make-virtualbox
 
-we also have following runnsers:
+we also have following runners:
 
 platform | script
 --- | ---
