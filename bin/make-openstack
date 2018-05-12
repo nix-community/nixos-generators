@@ -1,3 +1,3 @@
 #!/bin/sh
-OPENSTACK_DIR=$(nix-build '<nixpkgs/nixos>' -A config.system.build.novaImage -I nixos-config=lib/openstack.nix -I nixcfg=config.nix)
+OPENSTACK_DIR=$(nix-build --no-out-link '<nixpkgs/nixos>' -A config.system.build.novaImage -I nixos-config=lib/openstack.nix -I nixcfg=config.nix)
 echo $OPENSTACK_DIR/*.qcow2
