@@ -1,3 +1,4 @@
 #!/bin/sh
-VM=$(nix-build --no-out-link '<nixpkgs/nixos>' -A config.system.build.vm -I nixos-config=lib/vm.nix -I nixcfg=config.nix)
-$($VM/bin/run-nixos-vm)
+CONFIG=${1:-config.nix}
+VM=$( nix-build --no-out-link '<nixpkgs/nixos>' -A config.system.build.vm -I nixos-config=lib/vm.nix -I nixcfg=${CONFIG} )
+$(${VM}/bin/run-nixos-vm)

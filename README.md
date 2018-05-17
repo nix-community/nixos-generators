@@ -5,6 +5,10 @@ for example:
 ```
 bin/make-iso
 ```
+or
+```
+bin/make-iso config.nix
+```
 
 it echoes the path to a iso image, which you then can flash onto an usb-stick or mount & boot in a virtual machine.
 
