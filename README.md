@@ -17,6 +17,7 @@ we currently have following generators:
 format | script
 --- | ---
 iso | bin/make-iso
+kexec | bin/make-kexec
 openstack | bin/make-openstack
 virtualbox | bin/make-virtualbox
 

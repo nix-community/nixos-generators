@@ -1,0 +1,4 @@
+#!/bin/sh
+CONFIG=${1:-config.nix}
+TAR_DIR=$( nix-build --no-out-link '<nixpkgs/nixos>' -A config.system.build.kexec_tarball -I nixos-config=lib/kexec.nix -I nixcfg=${CONFIG} )
+find $TAR_DIR/tarball -type f
