@@ -1,0 +1,14 @@
+#!/bin/sh
+echo "this is not working yet" && exit 1
+
+
+CONFIG=${1:-config.nix}
+ISO_DIR=$( nix-build \
+  --no-link \
+  '<nixpkgs/nixos>' \
+  -A config.system.build.sdImage \
+  -I nixpkgs=https://github.com/ElvishJerricco/nixpkgs/archive/cross-nixos-aarch64-2018-08-05.tar.gz \
+  -I nixos-config=lib/raspberry.nix \
+  -I nixcfg=${CONFIG}
+)
+echo $ISO_DIR/iso/nixos.iso
