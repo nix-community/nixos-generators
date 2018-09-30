@@ -1,4 +1,4 @@
-This is a simple collection of nixos image builders.
+A simple collection of nixos image builders.
 Just put your stuff into the config.nix and then call one of the image builders.
 
 for example:
