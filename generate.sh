@@ -11,7 +11,7 @@ NC='\033[0m' # No Color
 function help()
 {
 
-    echo -e "${0} $LYELLOW<options>$NC "
+    echo -e "${0} $LYELLOW<options> config_name$NC "
     echo ""
     echo -e " Options:"
     echo -e "$LYELLOW kvm virtualbox openstack kexec iso install-iso$NC"
@@ -20,7 +20,7 @@ function help()
 
 MODE=${1}
 CONFIG=${2:-config.nix} # use arg2 as config path or default to config.nix
-
+export NIX_DISK_IMAGE
 if [ ! -e "$CONFIG" ]; then
     echo "$LRED[-] Configfile \"$CONFIG\" not found$NC"
     exit 1
@@ -31,7 +31,10 @@ if [ "$MODE" == "kvm" ]; then
     VM=$( nix-build --no-out-link '<nixpkgs/nixos>' \
         -A config.system.build.vm \
         -I nixos-config=lib/vm.nix \
-        -I nixcfg="${CONFIG}" )
+        --argstr imageName nit.qcow \
+        -I nixcfg="${CONFIG}" \
+        )
+    echo "${VM}"
     eval "${VM}/bin/run-nixos-vm"
 
 # VirtualBox
