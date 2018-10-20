@@ -1,4 +1,5 @@
 #!/bin/sh
 CONFIG=${1:-config.nix}
-ISO_DIR=$( nix-build --no-out-link '<nixpkgs/nixos>' -A config.system.build.isoImage -I nixos-config=lib/iso.nix -I nixcfg=${CONFIG} )
+shift
+ISO_DIR=$( nix-build --no-out-link '<nixpkgs/nixos>' -A config.system.build.isoImage -I nixos-config=lib/iso.nix -I nixcfg=${CONFIG} "$@" )
 echo $ISO_DIR/iso/nixos.iso
