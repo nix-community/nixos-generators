@@ -24,7 +24,9 @@ Mode:
 
 Options:
     -c, --config
-    Nix configuration file path. Default is config.nix in execution directory
+        Nix configuration file as absolute path. Default: ./config.nix
+    -i, --image
+        Absolut path to generate image to.
     "
     exit 1
 }
@@ -36,7 +38,7 @@ Options:
 ######################
 set -o errexit
 
-CONFIG="config.nix"
+CONFIG="./config.nix"
 
 if [ "$#" == "0" ]; then
     help
@@ -48,8 +50,7 @@ MODE=${1}
 shift
 
 # options
-RUN_AFTER_BUILD=false
-IMAGE_NAME="nixos.qcow2"
+IMAGE_NAME=""
 
 # Parse args
 while (( "$#" )); do
@@ -58,15 +59,11 @@ while (( "$#" )); do
         IMAGE_NAME="$2"
         shift 2
 
-    elif [ "$1" == "-r" ] || [ "$1" == "--run" ]; then
-        RUN_AFTER_BUILD=true
-        shift
-
     elif [ "$1" == "-c" ] || [ "$1" == "--config" ]; then
         CONFIG="$2"
         shift 2
     else
-        echo "Invalid option found: $1"
+        echo -e "$LRED[-] Invalid option found: $1 $NC"
         exit 1
     fi
 
@@ -74,23 +71,13 @@ done
 
 # Check if nix config exists
 if [ ! -e "$CONFIG" ]; then
-    echo -e "$LRED[-] Configfile \"$CONFIG\" not found$NC"
+    echo -e "$LRED[-] Configfile '$CONFIG' not found$NC"
     exit 1
 fi
 
 
 # Default settings
 VM_SETTINGS="$(mktemp)"
-cat > "$VM_SETTINGS" << EndOfMessage
-{ ... }:
-{
-  imports = [
-    <nixpkgs/nixos/modules/virtualisation/virtualbox-image.nix>
-    <nixcfg>
-  ];
-}
-EndOfMessage
-
 
 
 ######################
@@ -100,6 +87,7 @@ EndOfMessage
 ######################
 if [ "$MODE" == "kvm" ]; then
 
+IMAGE_NAME="./nixos.qcow2"
 cat > "$VM_SETTINGS" << EndOfMessage
 { ... }:
 {
@@ -123,12 +111,9 @@ EndOfMessage
         -I nixos-config="$VM_SETTINGS" \
         -I nixcfg="${CONFIG}" \
         )
-    echo "${VM}"
 
     # Run after build
-    if [ $RUN_AFTER_BUILD == true ];then
-        eval "${VM}/bin/run-nixos-vm"
-    fi
+    eval "${VM}/bin/run-nixos-vm"
 
 ######################
 #                    #
@@ -136,6 +121,19 @@ EndOfMessage
 #                    #
 ######################
 elif [ "$MODE" == "virtualbox" ]; then
+IMAGE_NAME="./nixos.ova"
+    cat > "$VM_SETTINGS" << EndOfMessage
+{ ... }:
+{
+  imports = [
+    <nixpkgs/nixos/modules/virtualisation/virtualbox-image.nix>
+    <nixcfg>
+  ];
+
+  virtualisation.virtualbox.vmFileName = "$IMAGE_NAME";
+}
+EndOfMessage
+
    VBOX_DIR=$( nix-build --no-out-link '<nixpkgs/nixos>' \
         -A config.system.build.virtualBoxOVA \
         -I nixos-config="$VM_SETTINGS" \
@@ -150,12 +148,22 @@ elif [ "$MODE" == "virtualbox" ]; then
 #                    #
 ######################
 elif [ "$MODE" == "openstack" ]; then
+IMAGE_NAME="./nixos.openstack"
+cat > "$VM_SETTINGS" << EndOfMessage
+{ ... }:
+{
+  imports = [
+    <nixpkgs/nixos/maintainers/scripts/openstack/nova-image.nix>
+    <nixcfg>
+  ];
+}
+EndOfMessage
+
 OPENSTACK_DIR=$( nix-build --no-out-link '<nixpkgs/nixos>' \
     -A config.system.build.novaImage \
     -I nixos-config="$VM_SETTINGS" \
     -I nixcfg="${CONFIG}" )
 echo "[+] Generated openstack image to: $OPENSTACK_DIR/*.qcow2"
-
 
 
 ######################
@@ -164,6 +172,7 @@ echo "[+] Generated openstack image to: $OPENSTACK_DIR/*.qcow2"
 #                    #
 ######################
 elif [ "$MODE" == "kexec" ]; then
+IMAGE_NAME="./nixos.kexec"
 cat > "$VM_SETTINGS" << EndOfMessage
 { lib, ... }: let
 
@@ -204,6 +213,7 @@ echo "[+] Generated kexec image to: $IMG"
 #                    #
 ######################
 elif [ "$MODE" == "iso" ]; then
+IMAGE_NAME="./nixos.iso"
 cat > "$VM_SETTINGS" << EndOfMessage
 { ... }:
 {
@@ -234,6 +244,7 @@ echo "[+] Generated iso image to: $ISO_DIR/iso/nixos.iso"
 #                    #
 ######################
 elif [ "$MODE" == "install-iso" ]; then
+IMAGE_NAME="./nixos.iso"
 cat > "$VM_SETTINGS" << EndOfMessage
 { ... }:
 {
@@ -265,6 +276,7 @@ echo "[+] Generated install iso image to: $IMG"
 #                    #
 ######################
 else
+    echo -e "$LRED[-] Mode: '$MODE' does not exist$NC"
     help
 fi
 
