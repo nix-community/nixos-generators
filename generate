@@ -1,0 +1,271 @@
+#!/usr/bin/env bash
+
+######################
+#                    #
+#       COLORS       #
+#                    #
+######################
+LRED='\033[01;31m'
+LYELLOW='\033[01;33m'
+NC='\033[0m' # No Color
+
+######################
+#                    #
+#     FUNCTIONS      #
+#                    #
+######################
+function help()
+{
+
+echo -e "${0} $LYELLOW<mode>$NC <options>
+
+Mode:
+    kvm virtualbox openstack kexec iso install-iso
+
+Options:
+    -c, --config
+    Nix configuration file path. Default is config.nix in execution directory
+    "
+    exit 1
+}
+
+######################
+#                    #
+#        INIT        #
+#                    #
+######################
+set -o errexit
+
+CONFIG="config.nix"
+
+if [ "$#" == "0" ]; then
+    help
+    exit 1
+fi
+
+# Get mode arg
+MODE=${1}
+shift
+
+# options
+RUN_AFTER_BUILD=false
+IMAGE_NAME="nixos.qcow2"
+
+# Parse args
+while (( "$#" )); do
+
+    if [ "$1" == "-i" ] || [ "$1" == "--image" ]; then
+        IMAGE_NAME="$2"
+        shift 2
+
+    elif [ "$1" == "-r" ] || [ "$1" == "--run" ]; then
+        RUN_AFTER_BUILD=true
+        shift
+
+    elif [ "$1" == "-c" ] || [ "$1" == "--config" ]; then
+        CONFIG="$2"
+        shift 2
+    else
+        echo "Invalid option found: $1"
+        exit 1
+    fi
+
+done
+
+# Check if nix config exists
+if [ ! -e "$CONFIG" ]; then
+    echo -e "$LRED[-] Configfile \"$CONFIG\" not found$NC"
+    exit 1
+fi
+
+
+# Default settings
+VM_SETTINGS="$(mktemp)"
+cat > "$VM_SETTINGS" << EndOfMessage
+{ ... }:
+{
+  imports = [
+    <nixpkgs/nixos/modules/virtualisation/virtualbox-image.nix>
+    <nixcfg>
+  ];
+}
+EndOfMessage
+
+
+
+######################
+#                    #
+#       KVM          #
+#                    #
+######################
+if [ "$MODE" == "kvm" ]; then
+
+cat > "$VM_SETTINGS" << EndOfMessage
+{ ... }:
+{
+  imports = [
+    <nixpkgs/nixos/modules/virtualisation/qemu-vm.nix>
+    <nixcfg>
+  ];
+
+  virtualisation.qemu.networkingOptions = [
+    "-net nic,netdev=user.0,model=virtio"
+    "-netdev user,id=user.0\\\${QEMU_NET_OPTS:+,\\\$QEMU_NET_OPTS},hostfwd=tcp::8088-:80,hostfwd=tcp::8022-:22"
+  ];
+  virtualisation.graphics = false;
+
+  virtualisation.diskImage = "$IMAGE_NAME";
+}
+EndOfMessage
+
+    VM=$( nix-build --no-out-link '<nixpkgs/nixos>' \
+        -A config.system.build.vm \
+        -I nixos-config="$VM_SETTINGS" \
+        -I nixcfg="${CONFIG}" \
+        )
+    echo "${VM}"
+
+    # Run after build
+    if [ $RUN_AFTER_BUILD == true ];then
+        eval "${VM}/bin/run-nixos-vm"
+    fi
+
+######################
+#                    #
+#    VIRTUALBOX      #
+#                    #
+######################
+elif [ "$MODE" == "virtualbox" ]; then
+   VBOX_DIR=$( nix-build --no-out-link '<nixpkgs/nixos>' \
+        -A config.system.build.virtualBoxOVA \
+        -I nixos-config="$VM_SETTINGS" \
+        -I nixcfg="${CONFIG}" )
+    echo "[+] Generated virtualbox image to: $VBOX_DIR/*.ova"
+
+
+
+######################
+#                    #
+#     OPENSTACK      #
+#                    #
+######################
+elif [ "$MODE" == "openstack" ]; then
+OPENSTACK_DIR=$( nix-build --no-out-link '<nixpkgs/nixos>' \
+    -A config.system.build.novaImage \
+    -I nixos-config="$VM_SETTINGS" \
+    -I nixcfg="${CONFIG}" )
+echo "[+] Generated openstack image to: $OPENSTACK_DIR/*.qcow2"
+
+
+
+######################
+#                    #
+#       KEXEC        #
+#                    #
+######################
+elif [ "$MODE" == "kexec" ]; then
+cat > "$VM_SETTINGS" << EndOfMessage
+{ lib, ... }: let
+
+  clever-tests = builtins.fetchGit {
+    url = https://github.com/cleverca22/nix-tests;
+    rev = "4761ec62c4056f2b1df4d468a1e129b808734221"; #master on 2018-05-20
+  };
+in {
+  imports = [
+    <nixpkgs/nixos/modules/installer/netboot/netboot-minimal.nix>
+    <nixcfg>
+    "\${clever-tests}/kexec/autoreboot.nix"
+    "\${clever-tests}/kexec/kexec.nix"
+    "\${clever-tests}/kexec/justdoit.nix"
+  ];
+  boot.loader.grub.enable = false;
+  boot.kernelParams = [
+    "console=ttyS0,115200"          # allows certain forms of remote access, if the hardware is setup right
+    "panic=30" "boot.panic_on_fail" # reboot the machine upon fatal boot issues
+  ];
+  systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
+  networking.hostName = lib.mkDefault "kexec";
+}
+EndOfMessage
+
+TAR_DIR=$( nix-build --no-out-link '<nixpkgs/nixos>' \
+    -A config.system.build.kexec_tarball \
+    -I nixos-config="$VM_SETTINGS" \
+    -I nixcfg="${CONFIG}" )
+IMG=$(find "$TAR_DIR/tarball" -type f)
+echo "[+] Generated kexec image to: $IMG"
+
+
+
+######################
+#                    #
+#       ISO          #
+#                    #
+######################
+elif [ "$MODE" == "iso" ]; then
+cat > "$VM_SETTINGS" << EndOfMessage
+{ ... }:
+{
+  imports = [
+    <nixpkgs/nixos/modules/virtualisation/qemu-vm.nix>
+    <nixcfg>
+  ];
+
+  # EFI booting
+  isoImage.makeEfiBootable = true;
+
+  # USB booting
+  isoImage.makeUsbBootable = true;
+}
+EndOfMessage
+
+ISO_DIR=$( nix-build --no-out-link '<nixpkgs/nixos>' \
+    -A config.system.build.isoImage \
+    -I nixos-config="$VM_SETTINGS" \
+    -I nixcfg="${CONFIG}" )
+echo "[+] Generated iso image to: $ISO_DIR/iso/nixos.iso"
+
+
+
+######################
+#                    #
+#   VM INSTALL ISO   #
+#                    #
+######################
+elif [ "$MODE" == "install-iso" ]; then
+cat > "$VM_SETTINGS" << EndOfMessage
+{ ... }:
+{
+  imports = [
+    <nixpkgs/nixos/modules/virtualisation/qemu-vm.nix>
+    <nixcfg>
+  ];
+  # for installer
+  isoImage.isoName = "nixos.iso";
+
+  # override installation-cd-base and enable wpa and sshd start at boot
+  systemd.services.wpa_supplicant.wantedBy = lib.mkForce [ "multi-user.target" ];
+  systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
+}
+EndOfMessage
+
+
+ISO_DIR=$( nix-build --no-out-link '<nixpkgs/nixos>' \
+    -A config.system.build.isoImage \
+    -I nixos-config="$VM_SETTINGS" \
+    -I nixcfg="${CONFIG}" )
+IMG=$(find "$ISO_DIR/iso/" -type f)
+echo "[+] Generated install iso image to: $IMG"
+
+
+######################
+#                    #
+#       END          #
+#                    #
+######################
+else
+    help
+fi
+
+
