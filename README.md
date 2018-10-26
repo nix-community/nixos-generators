@@ -26,3 +26,4 @@ we also have following runners:
 platform | script
 --- | ---
 qemu-kvm | bin/run-vm
+qemu-kvm (without gui) | bin/run-vm-nogui
