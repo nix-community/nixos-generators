@@ -27,6 +27,8 @@ Options:
         Nix configuration file as absolute path. Default: ./config.nix
     -i, --image
         Absolut path to generate image to.
+    -s, --script
+        Scriptable output
     "
     exit 1
 }
@@ -51,6 +53,7 @@ shift
 
 # options
 IMAGE_NAME=""
+SCRIPT_MODE=false
 
 # Parse args
 while (( "$#" )); do
@@ -58,6 +61,10 @@ while (( "$#" )); do
     if [ "$1" == "-i" ] || [ "$1" == "--image" ]; then
         IMAGE_NAME="$2"
         shift 2
+
+    elif [ "$1" == "-s" ] || [ "$1" == "--script" ]; then
+        SCRIPT_MODE=true
+        shift
 
     elif [ "$1" == "-c" ] || [ "$1" == "--config" ]; then
         CONFIG="$2"
@@ -112,8 +119,9 @@ EndOfMessage
         -I nixcfg="${CONFIG}" \
         )
 
+    echo "${VM}"
     # Run after build
-    eval "${VM}/bin/run-nixos-vm"
+    # eval "${VM}/bin/run-nixos-vm"
 
 ######################
 #                    #
@@ -138,8 +146,12 @@ EndOfMessage
         -A config.system.build.virtualBoxOVA \
         -I nixos-config="$VM_SETTINGS" \
         -I nixcfg="${CONFIG}" )
-    echo "[+] Generated virtualbox image to: $VBOX_DIR/*.ova"
 
+if [ $SCRIPT_MODE ]; then
+   echo "$VBOX_DIR"
+else
+    echo "[+] Generated virtualbox image to: $VBOX_DIR/*.ova"
+fi
 
 
 ######################
@@ -163,8 +175,12 @@ OPENSTACK_DIR=$( nix-build --no-out-link '<nixpkgs/nixos>' \
     -A config.system.build.novaImage \
     -I nixos-config="$VM_SETTINGS" \
     -I nixcfg="${CONFIG}" )
-echo "[+] Generated openstack image to: $OPENSTACK_DIR/*.qcow2"
 
+if [ $SCRIPT_MODE ]; then
+    echo " $OPENSTACK_DIR/*.qcow2"
+else
+    echo "[+] Generated openstack image to: $OPENSTACK_DIR/*.qcow2"
+fi
 
 ######################
 #                    #
@@ -203,7 +219,13 @@ TAR_DIR=$( nix-build --no-out-link '<nixpkgs/nixos>' \
     -I nixos-config="$VM_SETTINGS" \
     -I nixcfg="${CONFIG}" )
 IMG=$(find "$TAR_DIR/tarball" -type f)
-echo "[+] Generated kexec image to: $IMG"
+
+
+if [ $SCRIPT_MODE ]; then
+    echo "$IMG"
+else
+    echo "[+] Generated kexec image to: $IMG"
+fi
 
 
 
@@ -218,7 +240,7 @@ cat > "$VM_SETTINGS" << EndOfMessage
 { ... }:
 {
   imports = [
-    <nixpkgs/nixos/modules/virtualisation/qemu-vm.nix>
+    <nixpkgs/nixos/modules/installer/cd-dvd/iso-image.nix>
     <nixcfg>
   ];
 
@@ -234,9 +256,12 @@ ISO_DIR=$( nix-build --no-out-link '<nixpkgs/nixos>' \
     -A config.system.build.isoImage \
     -I nixos-config="$VM_SETTINGS" \
     -I nixcfg="${CONFIG}" )
-echo "[+] Generated iso image to: $ISO_DIR/iso/nixos.iso"
 
-
+if [ $SCRIPT_MODE ]; then
+    echo " $ISO_DIR/iso/nixos.iso"
+else
+    echo "[+] Generated iso image to: $ISO_DIR/iso/nixos.iso"
+fi
 
 ######################
 #                    #
@@ -249,7 +274,7 @@ cat > "$VM_SETTINGS" << EndOfMessage
 { ... }:
 {
   imports = [
-    <nixpkgs/nixos/modules/virtualisation/qemu-vm.nix>
+    <nixpkgs/nixos/modules/installer/cd-dvd/installation-cd-base.nix>
     <nixcfg>
   ];
   # for installer
@@ -266,8 +291,12 @@ ISO_DIR=$( nix-build --no-out-link '<nixpkgs/nixos>' \
     -A config.system.build.isoImage \
     -I nixos-config="$VM_SETTINGS" \
     -I nixcfg="${CONFIG}" )
-IMG=$(find "$ISO_DIR/iso/" -type f)
-echo "[+] Generated install iso image to: $IMG"
+
+if [ $SCRIPT_MODE ]; then
+    echo "$ISO_DIR/iso/nixos.iso"
+else
+    echo "[+] Generated install iso image to: $ISO_DIR/iso/nixos.iso"
+fi
 
 
 ######################
@@ -280,4 +309,5 @@ else
     help
 fi
 
-
+# Cleanup
+rm "$VM_SETTINGS"

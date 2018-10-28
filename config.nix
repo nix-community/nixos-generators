@@ -8,6 +8,5 @@
   };
 
   users.users.root.openssh.authorizedKeys.keys = [
-    # Put your pubkey here
   ];
 }
