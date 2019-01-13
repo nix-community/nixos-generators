@@ -19,6 +19,7 @@ format | script
 iso | bin/make-iso
 kexec | bin/make-kexec
 openstack | bin/make-openstack
+qcow2 | bin/make-qcow
 virtualbox | bin/make-virtualbox
 
 we also have following runners:
