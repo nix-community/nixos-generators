@@ -26,12 +26,13 @@ in {
       name = "kexec-nixos";
       text = ''
         #!/bin/sh
+        set -eu
         ARCHIVE=`awk '/^__ARCHIVE_BELOW__/ { print NR + 1; exit 0; }' $0`
 
         tail -n+$ARCHIVE $0 | tar xJ -C /
         /kexec_nixos
 
-        exit 0
+        exit 1
 
         __ARCHIVE_BELOW__
       '';
