@@ -18,6 +18,7 @@ format | script
 --- | ---
 iso | bin/make-iso
 kexec | bin/make-kexec
+kexec-bundle | bin/make-kexec-bundle
 openstack | bin/make-openstack
 qcow2 | bin/make-qcow
 virtualbox | bin/make-virtualbox

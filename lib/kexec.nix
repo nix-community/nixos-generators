@@ -1,4 +1,4 @@
-{ lib, ... }: let
+{ config, pkgs, lib, ... }: let
 
   clever-tests = builtins.fetchGit {
     url = https://github.com/cleverca22/nix-tests;
@@ -12,6 +12,40 @@ in {
     "${clever-tests}/kexec/kexec.nix"
     "${clever-tests}/kexec/justdoit.nix"
   ];
+
+  system.build = rec {
+    kexec_tarball = pkgs.callPackage <nixpkgs/nixos/lib/make-system-tarball.nix> {
+      storeContents = [
+        { object = config.system.build.kexec_script; symlink = "/kexec_nixos"; }
+      ];
+      contents = [];
+    };
+
+    kexec_tarball_self_extract_script = pkgs.writeTextFile {
+      executable = true;
+      name = "kexec-nixos";
+      text = ''
+        #!/bin/sh
+        ARCHIVE=`awk '/^__ARCHIVE_BELOW__/ { print NR + 1; exit 0; }' $0`
+
+        tail -n+$ARCHIVE $0 | tar xJ -C /
+        /kexec_nixos
+
+        exit 0
+
+        __ARCHIVE_BELOW__
+      '';
+    };
+
+    kexec_bundle = pkgs.runCommand "kexec_bundle" {} ''
+      cat \
+        ${kexec_tarball_self_extract_script} \
+        ${kexec_tarball}/tarball/nixos-system-${kexec_tarball.system}.tar.xz \
+        > $out
+      chmod +x $out
+    '';
+  };
+
   boot.loader.grub.enable = false;
   boot.kernelParams = [
     "console=ttyS0,115200"          # allows certain forms of remote access, if the hardware is setup right
