@@ -1,0 +1,5 @@
+#!/bin/sh
+CONFIG=${1:-config.nix}
+shift
+out=$(nix-build --no-out-link '<nixpkgs/nixos>' -A config.system.build.googleComputeImage -I nixos-config=lib/gce.nix -I nixcfg=${CONFIG} "$@" )
+echo "$out"/*.tar.gz
