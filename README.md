@@ -14,8 +14,9 @@ it echoes the path to a iso image, which you then can flash onto an usb-stick or
 
 we currently have following generators:
 
-format | script
---- | ---
+format | script | description
+--- | --- | ---
+gce | bin/make-gce | Google Compute Image
 iso | bin/make-iso
 kexec | bin/make-kexec
 kexec-bundle | bin/make-kexec-bundle
