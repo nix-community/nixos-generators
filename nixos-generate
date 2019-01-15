@@ -3,7 +3,7 @@ set -euo pipefail
 
 ## Configuration
 
-libexec_dir=$(dirname "$0")
+libexec_dir="${0%/*}"
 configuration_path=${NIX_CONFIG:-$libexec_dir/config.nix}
 format_dir=$libexec_dir/formats
 format_path=
