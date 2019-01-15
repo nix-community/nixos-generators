@@ -5,8 +5,8 @@ set -euo pipefail
 
 libexec_dir=$(dirname "$0")
 configuration_path=${NIX_CONFIG:-./config.nix}
-target_dir=$libexec_dir/targets
-target=
+format_dir=$libexec_dir/formats
+format_path=
 
 ## Functions
 
@@ -24,10 +24,15 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
-    --target)
-      target=$2
+    --format)
+      format_path=$format_dir/$2.nix
       shift
       shift
+
+      if [[ ! -e $format_path ]]; then
+        abort "format $format_path not found"
+      fi
+
       ;;
     *)
       abort "unknown option $1"
@@ -35,24 +40,18 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ -z $target ]]; then
-  abort "missing target"
-fi
-
-target_path=$target_dir/$target.nix
-
-if [[ ! -e $target_path ]]; then
-  abort "target $target_path not found"
+if [[ -z $format_path ]]; then
+  abort "missing format"
 fi
 
 args=(
-  "$libexec_dir/eval-target.nix"
+  "$libexec_dir/eval-format.nix"
   --arg configuration "$configuration_path"
-  --arg target "$target_path"
+  --arg formatConfig "$format_path"
 )
 
-targetAttr=$(nix-instantiate "${args[@]}" --eval --json -A config.targetAttr | jq -r .)
+formatAttr=$(nix-instantiate "${args[@]}" --eval --json -A config.formatAttr | jq -r .)
 
-out=$(nix-build "${args[@]}" --no-out-link -A "config.system.build.$targetAttr")
+out=$(nix-build "${args[@]}" --no-out-link -A "config.system.build.$formatAttr")
 
 echo "$out"/*
