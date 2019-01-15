@@ -21,7 +21,14 @@ Options:
     select the nixos configuration to build. Default: $configuration_path
 * --format NAME: select one of the pre-determined formats
 * --format-path PATH: pass a custom format
+* --list: list the available built-in formats
 USAGE
+}
+
+listFormats() {
+  for format in "$format_dir"/*.nix; do
+    basename "$format" ".nix"
+  done
 }
 
 abort() {
@@ -50,6 +57,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --help)
       showUsage
+      exit
+      ;;
+    --list)
+      listFormats
       exit
       ;;
     *)
