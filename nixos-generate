@@ -87,4 +87,4 @@ formatAttr=$(nix-instantiate "${args[@]}" --eval --json -A config.formatAttr | j
 
 out=$(nix-build "${args[@]}" --no-out-link -A "config.system.build.$formatAttr")
 
-echo "$out"/*
+find "$out" -type f -print -quit
