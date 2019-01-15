@@ -2,7 +2,6 @@
 {
   imports = [
     <nixpkgs/nixos/modules/installer/cd-dvd/installation-cd-base.nix>
-    <nixcfg>
   ];
 
   # for installer
@@ -12,4 +11,5 @@
   systemd.services.wpa_supplicant.wantedBy = lib.mkForce [ "multi-user.target" ];
   systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
 
+  formatAttr = "isoImage";
 }

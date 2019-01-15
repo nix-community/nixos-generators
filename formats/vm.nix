@@ -2,7 +2,6 @@
 {
   imports = [
     <nixpkgs/nixos/modules/virtualisation/qemu-vm.nix>
-    <nixcfg>
   ];
 
   virtualisation.qemu.networkingOptions = [

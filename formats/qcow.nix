@@ -1,9 +1,5 @@
 { config, lib, pkgs, ... }:
 {
-  imports = [
-    <nixcfg>
-  ];
-
   fileSystems."/" = {
     device = "/dev/disk/by-label/nixos";
     autoResize = true;
@@ -20,4 +16,6 @@
     diskSize = 8192;
     format = "qcow2";
   };
+
+  formatAttr = "qcow";
 }

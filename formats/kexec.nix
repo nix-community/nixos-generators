@@ -7,7 +7,6 @@
 in {
   imports = [
     <nixpkgs/nixos/modules/installer/netboot/netboot-minimal.nix>
-    <nixcfg>
     "${clever-tests}/kexec/autoreboot.nix"
     "${clever-tests}/kexec/kexec.nix"
     "${clever-tests}/kexec/justdoit.nix"
@@ -54,5 +53,6 @@ in {
   ];
   systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
   networking.hostName = lib.mkDefault "kexec";
-}
 
+  formatAttr = "kexec_tarball";
+}
