@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+## Configuration
+
+libexec_dir=$(dirname "$0")
+configuration_path=${NIX_CONFIG:-./config.nix}
+target_dir=$libexec_dir/targets
+target=
+
+## Functions
+
+abort() {
+  echo "$*" >&2
+  exit 1
+}
+
+## Main ##
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --configuration)
+      configuration_path=$2
+      shift
+      shift
+      ;;
+    --target)
+      target=$2
+      shift
+      shift
+      ;;
+    *)
+      abort "unknown option $1"
+      ;;
+  esac
+done
+
+if [[ -z $target ]]; then
+  abort "missing target"
+fi
+
+target_path=$target_dir/$target.nix
+
+if [[ ! -e $target_path ]]; then
+  abort "target $target_path not found"
+fi
+
+args=(
+  "$libexec_dir/eval-target.nix"
+  --arg configuration "$configuration_path"
+  --arg target "$target_path"
+)
+
+targetAttr=$(nix-instantiate "${args[@]}" --eval --json -A config.targetAttr | jq -r .)
+
+out=$(nix-build "${args[@]}" --no-out-link -A "config.system.build.$targetAttr")
+
+echo "$out"/*
