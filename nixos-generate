@@ -17,9 +17,9 @@ Usage: $0 [options]
 Options:
 
 * --help: shows this help
-* --configuration PATH:
+* -c, --configuration PATH:
     select the nixos configuration to build. Default: $configuration_path
-* --format NAME: select one of the pre-determined formats
+* -f, --format NAME: select one of the pre-determined formats
 * --format-path PATH: pass a custom format
 * --list: list the available built-in formats
 USAGE
@@ -40,12 +40,12 @@ abort() {
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --configuration)
+    -c | --configuration)
       configuration_path=$2
       shift
       shift
       ;;
-    --format)
+    -f | --format)
       format_path=$format_dir/$2.nix
       shift
       shift
