@@ -4,14 +4,28 @@ set -euo pipefail
 ## Configuration
 
 libexec_dir=$(dirname "$0")
-configuration_path=${NIX_CONFIG:-./config.nix}
+configuration_path=${NIX_CONFIG:-$libexec_dir/config.nix}
 format_dir=$libexec_dir/formats
 format_path=
 
 ## Functions
 
+showUsage() {
+  cat <<USAGE
+Usage: $0 [options]
+
+Options:
+
+* --help: shows this help
+* --configuration PATH:
+    select the nixos configuration to build. Default: $configuration_path
+* --format NAME: select one of the pre-determined formats
+* --format-path PATH: pass a custom format
+USAGE
+}
+
 abort() {
-  echo "$*" >&2
+  echo "aborted: $*" >&2
   exit 1
 }
 
@@ -34,6 +48,10 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
+    --help)
+      showUsage
+      exit
+      ;;
     *)
       abort "unknown option $1"
       ;;
@@ -41,7 +59,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z $format_path ]]; then
-  abort "missing format"
+  abort "missing format. use --help for more details"
 fi
 
 if [[ ! -e $format_path ]]; then
