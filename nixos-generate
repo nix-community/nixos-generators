@@ -28,11 +28,11 @@ while [[ $# -gt 0 ]]; do
       format_path=$format_dir/$2.nix
       shift
       shift
-
-      if [[ ! -e $format_path ]]; then
-        abort "format $format_path not found"
-      fi
-
+      ;;
+    --format-path)
+      format_path=$2
+      shift
+      shift
       ;;
     *)
       abort "unknown option $1"
@@ -42,6 +42,10 @@ done
 
 if [[ -z $format_path ]]; then
   abort "missing format"
+fi
+
+if [[ ! -e $format_path ]]; then
+  abort "format '$format_path' not found"
 fi
 
 args=(
