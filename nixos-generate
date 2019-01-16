@@ -7,6 +7,7 @@ libexec_dir="${0%/*}"
 configuration_path=${NIX_CONFIG:-$libexec_dir/config.nix}
 format_dir=$libexec_dir/formats
 format_path=
+run=
 
 ## Functions
 
@@ -22,6 +23,8 @@ Options:
 * -f, --format NAME: select one of the pre-determined formats
 * --format-path PATH: pass a custom format
 * --list: list the available built-in formats
+* --run: runs the configuration in a VM
+         only works for the "vm" and "vm-no-gui" formats
 USAGE
 }
 
@@ -43,16 +46,13 @@ while [[ $# -gt 0 ]]; do
     -c | --configuration)
       configuration_path=$2
       shift
-      shift
       ;;
     -f | --format)
       format_path=$format_dir/$2.nix
       shift
-      shift
       ;;
     --format-path)
       format_path=$2
-      shift
       shift
       ;;
     --help)
@@ -63,10 +63,18 @@ while [[ $# -gt 0 ]]; do
       listFormats
       exit
       ;;
+    --run)
+      run=1
+      # default to the VM format
+      if [[ -z $format_path ]]; then
+        format_path=$format_dir/vm.nix
+      fi
+      ;;
     *)
       abort "unknown option $1"
       ;;
   esac
+  shift
 done
 
 if [[ -z $format_path ]]; then
@@ -87,4 +95,9 @@ formatAttr=$(nix-instantiate "${args[@]}" --eval --json -A config.formatAttr | j
 
 out=$(nix-build "${args[@]}" --no-out-link -A "config.system.build.$formatAttr")
 
-find "$out" -type f -print -quit
+if [[ -z $run ]]; then
+  # show the first file
+  find "$out" -type f -print -quit
+else
+  "$out/bin/run-nixos-vm"
+fi
