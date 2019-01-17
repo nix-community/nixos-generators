@@ -24,10 +24,11 @@ format | description
 --- | ---
 gce | Google Compute Image
 iso | Installer ISO
-kexec | 
+kexec |
 kexec-bundle |
 openstack |
 qcow2 |
+raw |
 virtualbox |
 vm | only used as a qemu-kvm runner
 vm-nogui | same as before, but without a GUI
