@@ -1,32 +1,37 @@
-A simple collection of nixos image builders.
+# nixos-generators - one config, multiple formats
+
+The nixos-generators project allows to take the same NixOS configuration, and
+generate outputs for different target formats.
+
 Just put your stuff into the config.nix and then call one of the image builders.
 
 for example:
 ```
-bin/make-iso
+./nixos-generate -f iso
 ```
 or
+
 ```
-bin/make-iso config.nix
+./nixos-generate -f iso -c /etc/nixos/configuration.nix
 ```
 
-it echoes the path to a iso image, which you then can flash onto an usb-stick or mount & boot in a virtual machine.
+it echoes the path to a iso image, which you then can flash onto an usb-stick
+or mount & boot in a virtual machine.
 
-we currently have following generators:
+## Supported formats
 
-format | script | description
---- | --- | ---
-gce | bin/make-gce | Google Compute Image
-iso | bin/make-iso
-kexec | bin/make-kexec
-kexec-bundle | bin/make-kexec-bundle
-openstack | bin/make-openstack
-qcow2 | bin/make-qcow
-virtualbox | bin/make-virtualbox
-
-we also have following runners:
-
-platform | script
+format | description
 --- | ---
-qemu-kvm | bin/run-vm
-qemu-kvm (without gui) | bin/run-vm-nogui
+gce | Google Compute Image
+iso | Installer ISO
+kexec | 
+kexec-bundle |
+openstack |
+qcow2 |
+virtualbox |
+vm | only used as a qemu-kvm runner
+vm-nogui | same as before, but without a GUI
+
+## Usage
+
+Run `./nixos-generate --help` for detailed usage information

@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+## Configuration
+
+libexec_dir="${0%/*}"
+configuration_path=${NIX_CONFIG:-$libexec_dir/config.nix}
+format_dir=$libexec_dir/formats
+format_path=
+run=
+
+## Functions
+
+showUsage() {
+  cat <<USAGE
+Usage: $0 [options]
+
+Options:
+
+* --help: shows this help
+* -c, --configuration PATH:
+    select the nixos configuration to build. Default: $configuration_path
+* -f, --format NAME: select one of the pre-determined formats
+* --format-path PATH: pass a custom format
+* --list: list the available built-in formats
+* --run: runs the configuration in a VM
+         only works for the "vm" and "vm-no-gui" formats
+USAGE
+}
+
+listFormats() {
+  for format in "$format_dir"/*.nix; do
+    basename "$format" ".nix"
+  done
+}
+
+abort() {
+  echo "aborted: $*" >&2
+  exit 1
+}
+
+## Main ##
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -c | --configuration)
+      configuration_path=$2
+      shift
+      ;;
+    -f | --format)
+      format_path=$format_dir/$2.nix
+      shift
+      ;;
+    --format-path)
+      format_path=$2
+      shift
+      ;;
+    --help)
+      showUsage
+      exit
+      ;;
+    --list)
+      listFormats
+      exit
+      ;;
+    --run)
+      run=1
+      # default to the VM format
+      if [[ -z $format_path ]]; then
+        format_path=$format_dir/vm.nix
+      fi
+      ;;
+    *)
+      abort "unknown option $1"
+      ;;
+  esac
+  shift
+done
+
+if [[ -z $format_path ]]; then
+  abort "missing format. use --help for more details"
+fi
+
+if [[ ! -e $format_path ]]; then
+  abort "format '$format_path' not found"
+fi
+
+args=(
+  "$libexec_dir/eval-format.nix"
+  --arg configuration "$configuration_path"
+  --arg formatConfig "$format_path"
+)
+
+formatAttr=$(nix-instantiate "${args[@]}" --eval --json -A config.formatAttr | jq -r .)
+
+out=$(nix-build "${args[@]}" --no-out-link -A "config.system.build.$formatAttr")
+
+if [[ -z $run ]]; then
+  # show the first file
+  find "$out" -type f -print -quit
+else
+  "$out/bin/run-nixos-vm"
+fi
