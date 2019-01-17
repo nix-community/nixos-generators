@@ -8,7 +8,7 @@ let
   module = { lib, ... }: {
     options = {
       formatAttr = lib.mkOption {
-        default = "toplevel";
+        type = lib.types.str;
         description = "Declare the default attribute to build";
       };
     };

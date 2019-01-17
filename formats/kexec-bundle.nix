@@ -1,6 +1,6 @@
-{ ... }:
+{ lib, ... }:
 {
   imports = [ ./kexec.nix ];
 
-  formatAttr = "kexec_bundle";
+  formatAttr = lib.mkForce "kexec_bundle";
 }
