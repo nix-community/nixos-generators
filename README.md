@@ -35,3 +35,6 @@ vm-nogui | same as before, but without a GUI
 ## Usage
 
 Run `./nixos-generate --help` for detailed usage information
+
+### License
+This project is licensed under the terms of the MIT license.
