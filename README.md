@@ -23,7 +23,8 @@ or mount & boot in a virtual machine.
 format | description
 --- | ---
 gce | Google Compute Image
-iso | Installer ISO
+install-iso | Installer ISO
+iso | ISO
 kexec |
 kexec-bundle |
 openstack |
