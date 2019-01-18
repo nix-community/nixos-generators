@@ -7,6 +7,7 @@ libexec_dir="${0%/*}"
 configuration_path=${NIX_CONFIG:-$libexec_dir/config.nix}
 format_dir=$libexec_dir/formats
 format_path=
+target_system=
 run=
 
 ## Functions
@@ -25,6 +26,7 @@ Options:
 * --list: list the available built-in formats
 * --run: runs the configuration in a VM
          only works for the "vm" and "vm-no-gui" formats
+* --system: specify the target system (eg: x86_64-linux)
 USAGE
 }
 
@@ -70,6 +72,10 @@ while [[ $# -gt 0 ]]; do
         format_path=$format_dir/vm.nix
       fi
       ;;
+    --system)
+      target_system=$2
+      shift
+      ;;
     *)
       abort "unknown option $1"
       ;;
@@ -90,6 +96,10 @@ args=(
   --arg configuration "$configuration_path"
   --arg formatConfig "$format_path"
 )
+
+if [[ -n $target_system ]]; then
+  args+=(--argstr system "$target_system")
+fi
 
 formatAttr=$(nix-instantiate "${args[@]}" --eval --json -A config.formatAttr | jq -r .)
 
