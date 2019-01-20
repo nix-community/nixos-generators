@@ -92,6 +92,9 @@ if [[ ! -e $format_path ]]; then
   abort "format '$format_path' not found"
 fi
 
+configuration_path=$(realpath "$configuration_path")
+format_path=$(realpath "$format_path")
+
 args=(
   "$libexec_dir/eval-format.nix"
   --arg configuration "$configuration_path"
