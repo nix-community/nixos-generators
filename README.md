@@ -25,12 +25,12 @@ format | description
 gce | Google Compute Image
 install-iso | Installer ISO
 iso | ISO
-kexec |
-kexec-bundle |
-openstack |
-qcow2 |
-raw |
-virtualbox |
+kexec | kexec tarball (extract to / and run /kexec_nixos)
+kexec-bundle | same as before, but it's just an executable
+openstack | qcow2 image for openstack
+qcow2 | qcow2 image
+raw | raw image
+virtualbox | virtualbox VM
 vm | only used as a qemu-kvm runner
 vm-nogui | same as before, but without a GUI
 
