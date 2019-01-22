@@ -18,6 +18,14 @@ or
 it echoes the path to a iso image, which you then can flash onto an usb-stick
 or mount & boot in a virtual machine.
 
+# Installation
+
+nixos-generators can be installed from source into the user profile like this:
+
+```console
+$ nix-env -f https://github.com/nix-community/nixos-generators/archive/master.tar.gz -i
+```
+
 ## Supported formats
 
 format | description
