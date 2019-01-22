@@ -113,5 +113,6 @@ if [[ -z $run ]]; then
   # show the first file
   find "$out" -type f -print -quit
 else
-  "$out/bin/run-nixos-vm"
+  runner=$(find "$out"/bin -type l -print -quit)
+  exec "$runner"
 fi
