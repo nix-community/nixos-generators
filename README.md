@@ -30,6 +30,7 @@ $ nix-env -f https://github.com/nix-community/nixos-generators/archive/master.ta
 
 format | description
 --- | ---
+azure | Microsoft azure image
 gce | Google Compute Image
 install-iso | Installer ISO
 iso | ISO
