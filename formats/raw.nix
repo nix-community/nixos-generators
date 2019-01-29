@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, modulesPath, ... }:
 {
   fileSystems."/" = {
     device = "/dev/disk/by-label/nixos";
@@ -11,7 +11,7 @@
   boot.loader.timeout = 0;
 
 
-  system.build.raw = import <nixpkgs/nixos/lib/make-disk-image.nix> {
+  system.build.raw = import "${modulesPath}/../lib/make-disk-image.nix" {
     inherit lib config pkgs;
     diskSize = 2048;
     format = "raw";

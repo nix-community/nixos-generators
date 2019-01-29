@@ -1,7 +1,7 @@
-{ ... }:
+{ modulesPath, ... }:
 {
   imports = [
-    <nixpkgs/nixos/maintainers/scripts/openstack/nova-image.nix>
+    "${modulesPath}/../maintainers/scripts/openstack/nova-image.nix"
   ];
 
   formatAttr = "novaImage";

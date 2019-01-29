@@ -1,7 +1,7 @@
-{ ... }:
+{ modulesPath, ... }:
 {
   imports = [
-    <nixpkgs/nixos/modules/virtualisation/qemu-vm.nix>
+    "${modulesPath}/virtualisation/qemu-vm.nix"
   ];
 
   virtualisation.qemu.networkingOptions = [

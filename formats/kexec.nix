@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }: let
+{ config, pkgs, lib, modulesPath, ... }: let
 
   clever-tests = builtins.fetchGit {
     url = https://github.com/cleverca22/nix-tests;
@@ -6,14 +6,14 @@
   };
 in {
   imports = [
-    <nixpkgs/nixos/modules/installer/netboot/netboot-minimal.nix>
+    "${modulesPath}/installer/netboot/netboot-minimal.nix"
     "${clever-tests}/kexec/autoreboot.nix"
     "${clever-tests}/kexec/kexec.nix"
     "${clever-tests}/kexec/justdoit.nix"
   ];
 
   system.build = rec {
-    kexec_tarball = pkgs.callPackage <nixpkgs/nixos/lib/make-system-tarball.nix> {
+    kexec_tarball = pkgs.callPackage "${modulesPath}/../lib/make-system-tarball.nix" {
       storeContents = [
         { object = config.system.build.kexec_script; symlink = "/kexec_nixos"; }
       ];
