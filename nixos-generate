@@ -5,7 +5,7 @@ set -euo pipefail
 ## Configuration
 
 libexec_dir="${0%/*}"
-configuration_path=${NIX_CONFIG:-$libexec_dir/configuration.nix}
+configuration_path=${NIXOS_CONFIG:-$libexec_dir/configuration.nix}
 format_dir=$libexec_dir/formats
 format_path=
 target_system=
