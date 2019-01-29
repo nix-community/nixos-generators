@@ -1,7 +1,6 @@
 { nixpkgs ? <nixpkgs>
-, configuration ? 
-  import "${toString nixpkgs}/nixos/lib/from-env.nix" "NIXOS_CONFIG" <nixos-config>
-, formatConfig
+, configuration ? <nixos-config>
+, format-config ? <format-config>
 , system ? builtins.currentSystem
 }:
 let
@@ -18,7 +17,7 @@ import "${toString nixpkgs}/nixos/lib/eval-config.nix" {
   inherit system;
   modules = [
     module
-    formatConfig
+    format-config
     configuration
   ];
 }
