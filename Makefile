@@ -10,4 +10,4 @@ install:
 		-e "s|#!/usr/bin/env.*|#!/usr/bin/env bash|" \
 		nixos-generate > $(PREFIX)/bin/nixos-generate
 	chmod 755 $(PREFIX)/bin/nixos-generate
-	cp -r formats config.nix eval-format.nix $(SHARE)
+	cp -r formats config.nix nixos-generate.nix $(SHARE)

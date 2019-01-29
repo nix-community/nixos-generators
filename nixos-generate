@@ -96,7 +96,7 @@ configuration_path=$(realpath "$configuration_path")
 format_path=$(realpath "$format_path")
 
 args=(
-  "$libexec_dir/eval-format.nix"
+  "$libexec_dir/nixos-generate.nix"
   --arg configuration "$configuration_path"
   --arg formatConfig "$format_path"
 )
