@@ -1,0 +1,6 @@
+language: nix
+
+sudo: false
+
+script:
+  - nix-build

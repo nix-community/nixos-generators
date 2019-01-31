@@ -1,7 +1,7 @@
-{ config, ... }:
+{ config, modulesPath, ... }:
 {
   imports = [
-    <nixpkgs/nixos/modules/installer/cd-dvd/iso-image.nix>
+    "${toString modulesPath}/installer/cd-dvd/iso-image.nix"
   ];
 
   # EFI booting

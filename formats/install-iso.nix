@@ -1,7 +1,7 @@
-{ config, lib , ... }:
+{ config, lib, modulesPath, ... }:
 {
   imports = [
-    <nixpkgs/nixos/modules/installer/cd-dvd/installation-cd-base.nix>
+    "${toString modulesPath}/installer/cd-dvd/installation-cd-base.nix"
   ];
 
   # for installer

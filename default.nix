@@ -3,7 +3,7 @@
 with pkgs;
 stdenv.mkDerivation {
   name = "nixos-generators";
-  src = ./.;
+  src = lib.cleanSource ./.;
   nativeBuildInputs = [ makeWrapper ];
   installFlags = [ "PREFIX=$(out)" ];
   postFixup = ''

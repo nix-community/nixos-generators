@@ -5,9 +5,9 @@ set -euo pipefail
 ## Configuration
 
 libexec_dir="${0%/*}"
-configuration_path=${NIX_CONFIG:-$libexec_dir/config.nix}
+configuration=${NIXOS_CONFIG:-$libexec_dir/configuration.nix}
+format=
 format_dir=$libexec_dir/formats
-format_path=
 target_system=
 run=
 
@@ -21,7 +21,7 @@ Options:
 
 * --help: shows this help
 * -c, --configuration PATH:
-    select the nixos configuration to build. Default: $configuration_path
+    select the nixos configuration to build. Default: $configuration
 * -f, --format NAME: select one of the pre-determined formats
 * --format-path PATH: pass a custom format
 * --list: list the available built-in formats
@@ -47,15 +47,15 @@ abort() {
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -c | --configuration)
-      configuration_path=$2
+      configuration=$2
       shift
       ;;
     -f | --format)
-      format_path=$format_dir/$2.nix
+      format=$format_dir/$2.nix
       shift
       ;;
     --format-path)
-      format_path=$2
+      format=$2
       shift
       ;;
     --help)
@@ -69,8 +69,8 @@ while [[ $# -gt 0 ]]; do
     --run)
       run=1
       # default to the VM format
-      if [[ -z $format_path ]]; then
-        format_path=$format_dir/vm.nix
+      if [[ -z $format ]]; then
+        format=$format_dir/vm.nix
       fi
       ;;
     --system)
@@ -84,21 +84,14 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
-if [[ -z $format_path ]]; then
+if [[ -z $format ]]; then
   abort "missing format. use --help for more details"
 fi
 
-if [[ ! -e $format_path ]]; then
-  abort "format '$format_path' not found"
-fi
-
-configuration_path=$(realpath "$configuration_path")
-format_path=$(realpath "$format_path")
-
 args=(
-  "$libexec_dir/eval-format.nix"
-  --arg configuration "$configuration_path"
-  --arg formatConfig "$format_path"
+  "$libexec_dir/nixos-generate.nix"
+  -I "nixos-config=$configuration"
+  -I "format-config=$format"
 )
 
 if [[ -n $target_system ]]; then

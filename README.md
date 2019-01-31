@@ -3,7 +3,7 @@
 The nixos-generators project allows to take the same NixOS configuration, and
 generate outputs for different target formats.
 
-Just put your stuff into the config.nix and then call one of the image builders.
+Just put your stuff into the configuration.nix and then call one of the image builders.
 
 for example:
 ```
