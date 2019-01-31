@@ -1,7 +1,7 @@
 { config, lib, modulesPath, ... }:
 {
   imports = [
-    "${modulesPath}/installer/cd-dvd/installation-cd-base.nix"
+    "${toString modulesPath}/installer/cd-dvd/installation-cd-base.nix"
   ];
 
   # for installer

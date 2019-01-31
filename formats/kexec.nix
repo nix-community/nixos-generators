@@ -6,14 +6,14 @@
   };
 in {
   imports = [
-    "${modulesPath}/installer/netboot/netboot-minimal.nix"
+    "${toString modulesPath}/installer/netboot/netboot-minimal.nix"
     "${clever-tests}/kexec/autoreboot.nix"
     "${clever-tests}/kexec/kexec.nix"
     "${clever-tests}/kexec/justdoit.nix"
   ];
 
   system.build = rec {
-    kexec_tarball = pkgs.callPackage "${modulesPath}/../lib/make-system-tarball.nix" {
+    kexec_tarball = pkgs.callPackage "${toString modulesPath}/../lib/make-system-tarball.nix" {
       storeContents = [
         { object = config.system.build.kexec_script; symlink = "/kexec_nixos"; }
       ];

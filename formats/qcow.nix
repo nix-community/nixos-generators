@@ -11,7 +11,7 @@
   boot.loader.timeout = 0;
 
 
-  system.build.qcow = import "${modulesPath}/../lib/make-disk-image.nix" {
+  system.build.qcow = import "${toString modulesPath}/../lib/make-disk-image.nix" {
     inherit lib config pkgs;
     diskSize = 8192;
     format = "qcow2";

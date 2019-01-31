@@ -1,7 +1,7 @@
 { modulesPath, ... }:
 {
   imports = [
-    "${modulesPath}/virtualisation/google-compute-image.nix"
+    "${toString modulesPath}/virtualisation/google-compute-image.nix"
   ];
 
   formatAttr = "googleComputeImage";

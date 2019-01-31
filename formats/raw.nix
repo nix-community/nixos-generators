@@ -11,7 +11,7 @@
   boot.loader.timeout = 0;
 
 
-  system.build.raw = import "${modulesPath}/../lib/make-disk-image.nix" {
+  system.build.raw = import "${toString modulesPath}/../lib/make-disk-image.nix" {
     inherit lib config pkgs;
     diskSize = 2048;
     format = "raw";
