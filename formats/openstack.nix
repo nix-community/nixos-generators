@@ -1,8 +1,8 @@
 { modulesPath, ... }:
 {
   imports = [
-    "${toString modulesPath}/../maintainers/scripts/openstack/nova-image.nix"
+    "${toString modulesPath}/../maintainers/scripts/openstack/openstack-image.nix"
   ];
 
-  formatAttr = "novaImage";
+  formatAttr = "openstackImage";
 }
