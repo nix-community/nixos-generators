@@ -42,10 +42,22 @@ raw | raw image
 virtualbox | virtualbox VM
 vm | only used as a qemu-kvm runner
 vm-nogui | same as before, but without a GUI
+sd-aarch64 | create sd card for aarch64. For cross compiling use `--system aarch64-linux` and read the cross-compile section.
 
 ## Usage
 
 Run `./nixos-generate --help` for detailed usage information
+
+## Cross Compiling
+
+To cross compile nixos images for other system you have
+to configure `boot.binfmtMiscRegistrations` on your host system.
+
+For more details about this have a look at :
+[clevers qemu-user](https://github.com/cleverca22/nixos-configs/blob/master/qemu.nix).
+
+Once you've run `nixos-rebuild` with theses options,
+you can use the `--system` option to create images for other architectures.
 
 ### License
 This project is licensed under the terms of the MIT license.
