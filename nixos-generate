@@ -9,6 +9,7 @@ configuration=${NIXOS_CONFIG:-$libexec_dir/configuration.nix}
 format=
 format_dir=$libexec_dir/formats
 target_system=
+cores=
 run=
 
 ## Functions
@@ -28,6 +29,7 @@ Options:
 * --run: runs the configuration in a VM
          only works for the "vm" and "vm-no-gui" formats
 * --system: specify the target system (eg: x86_64-linux)
+* --cores : to control the maximum amount of parallelism. (see nix-build documentation)
 USAGE
 }
 
@@ -48,6 +50,10 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     -c | --configuration)
       configuration=$2
+      shift
+      ;;
+    --cores)
+      cores=$2
       shift
       ;;
     -f | --format)
@@ -96,6 +102,10 @@ args=(
 
 if [[ -n $target_system ]]; then
   args+=(--argstr system "$target_system")
+fi
+
+if [[ -n $cores ]]; then
+  args+=(--cores "$cores")
 fi
 
 formatAttr=$(nix-instantiate "${args[@]}" --eval --json -A config.formatAttr | jq -r .)
