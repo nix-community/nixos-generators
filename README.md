@@ -37,6 +37,7 @@ iso | ISO
 kexec | kexec tarball (extract to / and run /kexec_nixos)
 kexec-bundle | same as before, but it's just an executable
 openstack | qcow2 image for openstack
+cloudstack | qcow2 image for cloudstack
 qcow2 | qcow2 image
 raw | raw image
 virtualbox | virtualbox VM
