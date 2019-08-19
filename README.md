@@ -7,12 +7,12 @@ Just put your stuff into the configuration.nix and then call one of the image bu
 
 for example:
 ```
-./nixos-generate -f iso
+nixos-generate -f iso
 ```
 or
 
 ```
-./nixos-generate -f iso -c /etc/nixos/configuration.nix
+nixos-generate -f iso -c /etc/nixos/configuration.nix
 ```
 
 it echoes the path to a iso image, which you then can flash onto an usb-stick
@@ -23,7 +23,7 @@ or mount & boot in a virtual machine.
 nixos-generators can be installed from source into the user profile like this:
 
 ```console
-$ nix-env -f https://github.com/nix-community/nixos-generators/archive/master.tar.gz -i
+nix-env -f https://github.com/nix-community/nixos-generators/archive/master.tar.gz -i
 ```
 
 ## Supported formats
@@ -48,7 +48,7 @@ sd-aarch64 | Like sd-aarch64-installer, but does not use default installer image
 
 ## Usage
 
-Run `./nixos-generate --help` for detailed usage information
+Run `nixos-generate --help` for detailed usage information.
 
 ## Cross Compiling
 
@@ -62,4 +62,5 @@ Once you've run `nixos-rebuild` with theses options,
 you can use the `--system` option to create images for other architectures.
 
 ### License
+
 This project is licensed under the terms of the MIT license.
