@@ -63,4 +63,4 @@ you can use the `--system` option to create images for other architectures.
 
 ### License
 
-This project is licensed under the terms of the MIT license.
+This project is licensed under the [MIT License](LICENSE).
