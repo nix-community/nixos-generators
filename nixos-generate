@@ -6,7 +6,7 @@ set -euo pipefail
 
 libexec_dir="${0%/*}"
 configuration=${NIXOS_CONFIG:-$libexec_dir/configuration.nix}
-format=
+format_path=
 format_dir=$libexec_dir/formats
 target_system=
 cores=
@@ -57,11 +57,11 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     -f | --format)
-      format=$format_dir/$2.nix
+      format_path=$format_dir/$2.nix
       shift
       ;;
     --format-path)
-      format=$2
+      format_path=$2
       shift
       ;;
     --help)
@@ -75,8 +75,8 @@ while [[ $# -gt 0 ]]; do
     --run)
       run=1
       # default to the VM format
-      if [[ -z $format ]]; then
-        format=$format_dir/vm.nix
+      if [[ -z $format_path ]]; then
+        format_path=$format_dir/vm.nix
       fi
       ;;
     --system)
@@ -90,14 +90,14 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
-if [[ -z $format ]]; then
+if [[ -z $format_path ]]; then
   abort "missing format. use --help for more details"
 fi
 
 args=(
   "$libexec_dir/nixos-generate.nix"
   -I "nixos-config=$configuration"
-  -I "format-config=$format"
+  -I "format-config=$format_path"
 )
 
 if [[ -n $target_system ]]; then
