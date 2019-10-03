@@ -63,6 +63,11 @@ For more details about this have a look at :
 Once you've run `nixos-rebuild` with theses options,
 you can use the `--system` option to create images for other architectures.
 
+
+## Example
+
+* [remote install ISO](./examples/remote-install) : create a bootable ISO which provides remote access via a hidden tor service
+
 ### License
 
 This project is licensed under the [MIT License](LICENSE).
