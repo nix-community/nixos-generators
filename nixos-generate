@@ -121,8 +121,8 @@ formatAttr=$(nix-instantiate "${nix_args[@]}" --eval --json -A config.formatAttr
 out=$(nix-build "${nix_args[@]}" --no-out-link -A "config.system.build.$formatAttr")
 
 if [[ -z $run ]]; then
-  # show the first file
-  find "$out" -type f -print -quit
+  # show the first file, ignoring nix-support
+  find "$out" -path "$out/nix-support" -prune -o -type f -print -quit
 else
   runner=$(find "$out"/bin -type l -print -quit)
   exec "$runner"
