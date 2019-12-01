@@ -31,6 +31,7 @@ nix-env -f https://github.com/nix-community/nixos-generators/archive/master.tar.
 format | description
 --- | ---
 azure | Microsoft azure image
+do | Digital Ocean image
 gce | Google Compute Image
 install-iso | Installer ISO
 iso | ISO
@@ -51,6 +52,15 @@ sd-aarch64 | Like sd-aarch64-installer, but does not use default installer image
 ## Usage
 
 Run `nixos-generate --help` for detailed usage information.
+
+## Using a particular nixpkgs
+
+To use features found in a different nixpkgs (for instance the Digital Ocean
+image was recently merged in nixpkgs):
+
+```
+NIX_PATH=nixpkgs=../nixpkgs nixos-generate -f do
+```
 
 ## Cross Compiling
 
