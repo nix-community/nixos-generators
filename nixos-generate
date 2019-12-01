@@ -15,6 +15,7 @@ run=
 nix_args=(
   "$libexec_dir/nixos-generate.nix"
 )
+nixpkgs_ver=
 
 ## Functions
 
@@ -35,6 +36,7 @@ Options:
 * --system: specify the target system (eg: x86_64-linux)
 * --cores : to control the maximum amount of parallelism. (see nix-build documentation)
 * -I KEY=VALUE: Add a key to the Nix expression search path.
+* --nixpkgs_ver: set the release version of nixpkgs
 USAGE
 }
 
@@ -92,6 +94,10 @@ while [[ $# -gt 0 ]]; do
       nix_args+=(-I "$2")
       shift
       ;;
+	--nixpkgs_ver)
+      nixpkgs_ver=$2
+      shift
+      ;;
     *)
       abort "unknown option $1"
       ;;
@@ -103,9 +109,14 @@ if [[ -z $format_path ]]; then
   abort "missing format. use --help for more details"
 fi
 
+if [[ -n $nixpkgs_ver ]]; then
+  args+=(--nixpkgs_ver "$nixpkgs_ver")
+fi
+
 nix_args+=(
   -I "nixos-config=$configuration"
   -I "format-config=$format_path"
+  -I "nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixos-$nixpkgs_ver.tar.gz"
 )
 
 if [[ -n $target_system ]]; then
@@ -118,7 +129,7 @@ fi
 
 formatAttr=$(nix-instantiate "${nix_args[@]}" --eval --json -A config.formatAttr | jq -r .)
 
-out=$(nix-build "${nix_args[@]}" --no-out-link -A "config.system.build.$formatAttr")
+out=$(nix-build "${nix_args[@]}" -A "config.system.build.$formatAttr")
 
 if [[ -z $run ]]; then
   # show the first file, ignoring nix-support
