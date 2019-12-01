@@ -1,0 +1,20 @@
+stages:
+    - build
+
+image: lnl7/nix:latest
+
+.template:
+    only:
+        - web
+    stage: build
+    before_script:
+        - nix --version
+        - chmod +w /etc/nix/nix.conf
+        - echo "system-features = kvm" >> /etc/nix/nix.conf
+    script:
+        - nix-shell --command './nixos-generate -f $formats --nixpkgs_ver $nixpkgs_ver'
+    after_script:
+        - cp -rf result/$output_file ./
+    artifacts:
+        paths:
+        - $output_file

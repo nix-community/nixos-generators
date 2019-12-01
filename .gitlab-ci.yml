@@ -1,0 +1,172 @@
+include: .included.yml
+
+variables:
+    nixpkgs_ver: "19.09"
+
+lxc-metadata:
+    variables:
+        output_file: "*.tar.xz"
+        formats: lxc-metadata
+    after_script:
+        - cd ./result/tarball
+        - cp -rf $output_file $CI_PROJECT_DIR/
+    extends:
+        - .template
+
+lxc:
+    variables:
+        output_file: "*.tar.xz"
+        formats: lxc
+    after_script:
+        - cd ./result/tarball
+        - cp -rf $output_file $CI_PROJECT_DIR/
+    extends:
+        - .template
+        
+azure:
+    variables:
+        output_file: "*.vhd"
+        formats: azure
+    extends:
+        - .template
+
+virtualbox:
+    variables:
+        output_file: "*.ova"
+        formats: virtualbox
+    extends:
+        - .template
+
+qcow:
+    variables:
+        output_file: "*.qcow2"
+        formats: qcow
+    extends:
+        - .template
+
+gce:
+    variables:
+        output_file: "*.tar.gz"
+        formats: gce
+    extends:
+        - .template
+        
+do:
+    variables:
+        nixpkgs_ver: "unstable"
+        output_file: "nixos.qcow2.gz"
+        formats: do
+    extends:
+        - .template
+
+iso:
+    variables:
+        output_file: "*.iso"
+        formats: iso
+    after_script:
+        - cp -rf result/iso/$output_file ./
+    extends:
+        - .template
+
+install-iso:
+    variables:
+        output_file: "*.iso"
+        formats: install-iso
+    after_script:
+        - cp -rf result/iso/$output_file ./
+    extends:
+        - .template
+
+install-iso-hyperv:
+    variables:
+        output_file: "*.iso"
+        formats: install-iso-hyperv
+    after_script:
+       - cp -rf result/iso/$output_file ./
+    extends:
+        - .template
+
+raw:
+    variables:
+        output_file: "*.img"
+        formats: raw
+    extends:
+        - .template
+
+vm:
+    variables:
+        output_file: "vm.tar"
+        formats: vm
+    after_script:
+        - cd ./result
+        - tar -cvhf $CI_PROJECT_DIR/$output_file *
+    artifacts:
+        paths:
+        - $CI_PROJECT_DIR/$output_file
+    extends:
+        - .template
+
+vm-nogui:
+    variables:
+        output_file: "vm-nogui.tar"
+        formats: vm-nogui
+    after_script:
+        - cd ./result
+        - tar -cvhf $CI_PROJECT_DIR/$output_file *
+    artifacts:
+        paths:
+        - $CI_PROJECT_DIR/$output_file
+    extends:
+        - .template
+        
+kexec:
+    variables:
+        output_file: "*.tar.xz"
+        formats: kexec
+    after_script:
+        - cd ./result
+        - tar -cvhf $CI_PROJECT_DIR/$output_file *
+    extends:
+        - .template
+
+kexec-bundle:
+    variables:
+        output_file: "kexec-bundle"
+        formats: kexec-bundle
+    after_script:
+        - cp -L result $output_file
+    extends:
+        - .template
+
+openstack:
+    variables:
+        output_file: "*.qcow2"
+        formats: openstack
+    extends:
+        - .template
+
+.cloudstack:
+    variables:
+        output_file: "*.qcow2"
+        formats: cloudstack
+    extends:
+        - .template
+        
+.sd-aarch64-installer:
+    variables:
+#        output_file: "*.img"
+        formats: sd-aarch64-installer
+    script:
+        - nix-shell --command './nixos-generate -f $formats --nixpkgs_ver $nixpkgs_ver --system aarch64-linux'
+    extends:
+        - .template
+
+.sd-aarch64:
+    variables:
+#        output_file: "*.img"
+        formats: sd-aarch64
+    script:
+        - nix-shell --command './nixos-generate -f $formats --nixpkgs_ver $nixpkgs_ver --system aarch64-linux'
+    extends:
+        - .template
+
