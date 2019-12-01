@@ -33,6 +33,7 @@ format | description
 azure | Microsoft azure image
 gce | Google Compute Image
 install-iso | Installer ISO
+install-iso-hyperv | Installer ISO with enabled hyper-v support
 iso | ISO
 kexec | kexec tarball (extract to / and run /kexec_nixos)
 kexec-bundle | same as before, but it's just an executable
