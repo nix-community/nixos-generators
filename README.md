@@ -54,6 +54,15 @@ sd-aarch64 | Like sd-aarch64-installer, but does not use default installer image
 
 Run `nixos-generate --help` for detailed usage information.
 
+## select a specific nixpkgs channel
+
+adds ability to select a specific channel version.
+
+example:
+```
+nix-shell --command './nixos-generate -f iso -I nixpkgs=channel:nixos-19.09'
+```
+
 ## Using a particular nixpkgs
 
 To use features found in a different nixpkgs (for instance the Digital Ocean
