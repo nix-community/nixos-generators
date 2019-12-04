@@ -3,11 +3,11 @@ stages:
 
 .tar_option:
     after_script:
-        - tar -cvhf $upload2Path.tar ./$upload2Path
+        - tar -cvhf $uploadPath.tar ./$uploadPath
     artifacts:
         name: "$uploadPath"
         paths:
-        - ./$uploadPath.tar
+        - $uploadPath.tar
 
 .template:
     only:
@@ -26,4 +26,4 @@ stages:
     artifacts:
         name: "$uploadPath"
         paths:
-        - ./$uploadPath
+        - $uploadPath
