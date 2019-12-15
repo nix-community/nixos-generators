@@ -1,0 +1,29 @@
+stages:
+    - build
+
+.tar_option:
+    after_script:
+        - tar -cvhf $uploadPath.tar ./$uploadPath
+    artifacts:
+        name: "$uploadPath"
+        paths:
+        - $uploadPath.tar
+
+.template:
+    only:
+        - web
+    stage: build
+    image: lnl7/nix:latest
+    before_script:
+        - nix --version
+        - chmod +w /etc/nix/nix.conf
+        - echo "system-features = kvm" >> /etc/nix/nix.conf
+        - sed -i -e 's/ --no-out-link//g' nixos-generate
+        - mkdir $uploadPath
+    script:
+        - nix-shell --command './nixos-generate -f $formats -I nixpkgs=channel:nixos-$nixpkgs_ver' |& tee $uploadPath/build.log
+        - mv $(realpath result) $uploadPath
+    artifacts:
+        name: "$uploadPath"
+        paths:
+        - $uploadPath

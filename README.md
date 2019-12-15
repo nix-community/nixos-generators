@@ -34,6 +34,7 @@ azure | Microsoft azure image
 do | Digital Ocean image
 gce | Google Compute Image
 install-iso | Installer ISO
+install-iso-hyperv | Installer ISO with enabled hyper-v support
 iso | ISO
 kexec | kexec tarball (extract to / and run /kexec_nixos)
 kexec-bundle | same as before, but it's just an executable
@@ -52,6 +53,15 @@ sd-aarch64 | Like sd-aarch64-installer, but does not use default installer image
 ## Usage
 
 Run `nixos-generate --help` for detailed usage information.
+
+## select a specific nixpkgs channel
+
+adds ability to select a specific channel version.
+
+example:
+```
+nix-shell --command './nixos-generate -f iso -I nixpkgs=channel:nixos-19.09'
+```
 
 ## Using a particular nixpkgs
 
