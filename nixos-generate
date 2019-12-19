@@ -32,6 +32,7 @@ Options:
 * --list: list the available built-in formats
 * --run: runs the configuration in a VM
          only works for the "vm" and "vm-no-gui" formats
+* --show-trace: show more detailed nix evaluation location information
 * --system: specify the target system (eg: x86_64-linux)
 * --cores : to control the maximum amount of parallelism. (see nix-build documentation)
 * -I KEY=VALUE: Add a key to the Nix expression search path.
@@ -83,6 +84,9 @@ while [[ $# -gt 0 ]]; do
       if [[ -z $format_path ]]; then
         format_path=$format_dir/vm.nix
       fi
+      ;;
+    --show-trace)
+      nix_args+=(--show-trace)
       ;;
     --system)
       target_system=$2
