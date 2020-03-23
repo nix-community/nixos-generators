@@ -13,7 +13,7 @@ in {
         object = config.system.build.toplevel + "/init";
         symlink = "/sbin/init";
       }
-    ] ++ (pkgs2storeContents [ pkgs.stdenv ]);
+    ];
 
     extraCommands = "mkdir -p proc sys dev";
   });
