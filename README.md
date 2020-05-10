@@ -44,6 +44,7 @@ openstack | qcow2 image for openstack
 cloudstack | qcow2 image for cloudstack
 qcow | qcow2 image
 raw | raw image
+raw-efi | raw image with efi support
 virtualbox | virtualbox VM
 vm | only used as a qemu-kvm runner
 vm-nogui | same as before, but without a GUI
