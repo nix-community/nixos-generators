@@ -43,7 +43,7 @@ lxc-metadata | the necessary metadata for the lxc image to start, usage: lxc ima
 openstack | qcow2 image for openstack
 cloudstack | qcow2 image for cloudstack
 qcow | qcow2 image
-raw | raw image
+raw | raw image with bios/mbr
 raw-efi | raw image with efi support
 virtualbox | virtualbox VM
 vm | only used as a qemu-kvm runner
