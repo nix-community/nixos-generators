@@ -49,6 +49,7 @@ raw-efi | raw image with efi support
 virtualbox | virtualbox VM
 vm | only used as a qemu-kvm runner
 vm-nogui | same as before, but without a GUI
+vmware | VMWare image (VMDK)
 sd-aarch64-installer | create an installer sd card for aarch64. For cross compiling use `--system aarch64-linux` and read the cross-compile section.
 sd-aarch64 | Like sd-aarch64-installer, but does not use default installer image config.
 
