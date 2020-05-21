@@ -30,9 +30,10 @@ nix-env -f https://github.com/nix-community/nixos-generators/archive/master.tar.
 
 format | description
 --- | ---
-azure | Microsoft azure image
+azure | Microsoft azure image (Generation 1 / VHD)
 do | Digital Ocean image
-gce | Google Compute Image
+gce | Google Compute image
+hyperv | Hyper-V Image (Generation 2 / VHDX)
 install-iso | Installer ISO
 install-iso-hyperv | Installer ISO with enabled hyper-v support
 iso | ISO
