@@ -19,4 +19,5 @@ in {
   });
 
   formatAttr = "tarball";
+  filename = "*/tarball/*.tar.xz";
 }

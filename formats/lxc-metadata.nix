@@ -13,6 +13,8 @@
       target = "/metadata.yaml";
     }];
   };
+
   formatAttr = "metadata";
+  filename = "*/tarball/*.tar.xz";
 }
 

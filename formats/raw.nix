@@ -19,4 +19,5 @@
   };
 
   formatAttr = "raw";
+  filename = "*.img";
 }
