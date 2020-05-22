@@ -11,4 +11,5 @@
   isoImage.makeUsbBootable = true;
 
   formatAttr = "isoImage";
+  filename = "*.iso";
 }
