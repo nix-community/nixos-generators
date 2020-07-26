@@ -9,7 +9,7 @@
   boot = {
     growPartition = true;
     kernelParams = [ "console=ttyS0" ];
-    loader.grub.device = "/dev/vda";
+    loader.grub.device = lib.mkDefault "/dev/vda";
     loader.timeout = 0;
     initrd.availableKernelModules = [ "uas" ];
   };
