@@ -15,6 +15,8 @@ run=
 nix_args=(
   "$libexec_dir/nixos-generate.nix"
 )
+has_outlink=false
+nix_build_args=()
 
 ## Functions
 
@@ -34,6 +36,7 @@ Options:
          only works for the "vm" and "vm-no-gui" formats
 * --show-trace: show more detailed nix evaluation location information
 * --system: specify the target system (eg: x86_64-linux)
+* -o, --out-link: specify the outlink location for nix-build
 * --cores : to control the maximum amount of parallelism. (see nix-build documentation)
 * -I KEY=VALUE: Add a key to the Nix expression search path.
 USAGE
@@ -96,12 +99,21 @@ while [[ $# -gt 0 ]]; do
       nix_args+=(-I "$2")
       shift
       ;;
+    -o | --out-link)
+      nix_build_args+=(--out-link "$2")
+      has_outlink=true
+      shift
+      ;;
     *)
       abort "unknown option $1"
       ;;
   esac
   shift
 done
+
+if ! $has_outlink; then
+  nix_build_args+=(--no-out-link)
+fi
 
 if [[ -z $format_path ]]; then
   abort "missing format. use --help for more details"
@@ -123,7 +135,7 @@ fi
 formatAttr=$(nix-instantiate "${nix_args[@]}" --eval --json -A config.formatAttr | jq -r .)
 filename=$(nix-instantiate "${nix_args[@]}" --eval --json -A config.filename | jq -r .)
 
-out=$(nix-build "${nix_args[@]}" --no-out-link -A "config.system.build.$formatAttr")
+out=$(nix-build "${nix_args[@]}" "${nix_build_args[@]}" -A "config.system.build.$formatAttr")
 
 if [[ -z $run ]]; then
   # show the first file, ignoring nix-support
