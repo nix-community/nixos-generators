@@ -30,6 +30,7 @@ nix-env -f https://github.com/nix-community/nixos-generators/archive/master.tar.
 
 format | description
 --- | ---
+amazon | Amazon EC2 image
 azure | Microsoft azure image (Generation 1 / VHD)
 do | Digital Ocean image
 gce | Google Compute image
