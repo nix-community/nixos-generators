@@ -4,6 +4,7 @@ with pkgs;
 stdenv.mkDerivation {
   name = "nixos-generators";
   src = lib.cleanSource ./.;
+  meta.description = "Collection of image builders";
   nativeBuildInputs = [ makeWrapper ];
   installFlags = [ "PREFIX=$(out)" ];
   postFixup = ''
