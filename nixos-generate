@@ -119,6 +119,10 @@ if [[ -z $format_path ]]; then
   abort "missing format. use --help for more details"
 fi
 
+if [[ ! -f $format_path ]]; then
+  abort "format file not found: $format_path"
+fi
+
 nix_args+=(
   -I "nixos-config=$configuration"
   -I "format-config=$format_path"
