@@ -32,6 +32,7 @@ format | description
 --- | ---
 amazon | Amazon EC2 image
 azure | Microsoft azure image (Generation 1 / VHD)
+cloudstack | qcow2 image for cloudstack
 do | Digital Ocean image
 gce | Google Compute image
 hyperv | Hyper-V Image (Generation 2 / VHDX)
@@ -43,17 +44,17 @@ kexec-bundle | same as before, but it's just an executable
 lxc | create a tarball which is importable as an lxc container, use together with lxc-metadata
 lxc-metadata | the necessary metadata for the lxc image to start, usage: lxc image import $(nixos-generate -f lxc-metadata) $(nixos-generate -f lxc)
 openstack | qcow2 image for openstack
-cloudstack | qcow2 image for cloudstack
 qcow | qcow2 image
 raw | raw image with bios/mbr
 raw-efi | raw image with efi support
+sd-aarch64 | Like sd-aarch64-installer, but does not use default installer image config.
+sd-aarch64-installer | create an installer sd card for aarch64. For cross compiling use `--system aarch64-linux` and read the cross-compile section.
+vagrant-virtualbox | VirtualBox image for [Vagrant](https://www.vagrantup.com/)
 virtualbox | virtualbox VM
 vm | only used as a qemu-kvm runner
 vm-bootloader | same as vm, but uses a real bootloader instead of netbooting
 vm-nogui | same as vm, but without a GUI
 vmware | VMWare image (VMDK)
-sd-aarch64-installer | create an installer sd card for aarch64. For cross compiling use `--system aarch64-linux` and read the cross-compile section.
-sd-aarch64 | Like sd-aarch64-installer, but does not use default installer image config.
 
 ## Usage
 
