@@ -16,8 +16,17 @@
         installFlags = [ "PREFIX=$(out)" ];
         postFixup = ''
           wrapProgram $out/bin/nixos-generate \
-            --prefix PATH : ${pkgs.lib.makeBinPath (with pkgs; [ jq coreutils findutils nix ])}
+            --prefix PATH : ${pkgs.lib.makeBinPath (with pkgs; [ jq coreutils findutils ])}
         '';
+      };
+
+      # Currently, you need to mark your configurations with makeOverridable in
+      # order to use nixos-generate on them.
+      nixosConfigurations.example = nixpkgs.lib.makeOverridable nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          ./configuration.nix
+        ];
       };
     });
     defaultPackage = forAllSystems (system: self.packages."${system}".nixos-generators);
@@ -25,16 +34,16 @@
     devShell = forAllSystems (system: let
       pkgs = nixpkgs.legacyPackages."${system}";
     in pkgs.mkShell {
-      buildInputs = with pkgs; [ jq coreutils findutils nix ];
+      buildInputs = with pkgs; [ jq coreutils findutils ];
     });
 
     # Make it runnable with `nix app`
     apps = forAllSystems (system: {
-      nixos-generators = {
+      nixos-generate = {
         type    = "app";
-        program = "${self.packages."${system}".nixos-generators}/bin/nixos-generators";
+        program = "${self.packages."${system}".nixos-generators}/bin/nixos-generate";
       };
     });
-    defaultApp = forAllSystems (system: self.apps."${system}".nixos-generators);
+    defaultApp = forAllSystems (system: self.apps."${system}".nixos-generate);
   };
 }

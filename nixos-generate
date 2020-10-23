@@ -7,6 +7,8 @@ readonly libexec_dir="${0%/*}"
 readonly format_dir=$libexec_dir/formats
 
 configuration=${NIXOS_CONFIG:-$libexec_dir/configuration.nix}
+flake_uri=
+flake_attr=
 format_path=
 target_system=
 cores=
@@ -28,6 +30,8 @@ Options:
 * --help: shows this help
 * -c, --configuration PATH:
     select the nixos configuration to build. Default: $configuration
+* --flake URI:
+    selects the nixos configuration to build, using flake uri like "~/dotfiles#my-config"
 * -f, --format NAME: select one of the pre-determined formats
 * --format-path PATH: pass a custom format
 * --list: list the available built-in formats
@@ -58,6 +62,16 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     -c | --configuration)
       configuration=$2
+      shift
+      ;;
+    --flake)
+      # Note: The reason I'm using awk over cut is because cutting with an
+      # out-of-bounds field will return the last in-bound field instead of empty
+      # string.
+      flake="$(echo "$2" | awk -F'#' '{ print $1; }')"
+
+      flake_uri="$(nix flake info --json -- "$flake" | jq -r .url)"
+      flake_attr="$(echo "$2" | awk -F'#' '{ print $2; }')"
       shift
       ;;
     --cores)
@@ -122,10 +136,18 @@ if [[ ! -f $format_path ]]; then
   abort "format file not found: $format_path"
 fi
 
-nix_args+=(
-  -I "nixos-config=$configuration"
-  -I "format-config=$format_path"
-)
+nix_args+=(--argstr formatConfig "$(realpath "$format_path")")
+
+if [[ -z "$flake_uri" ]]; then
+  nix_args+=(
+    -I "nixos-config=$configuration"
+  )
+else
+  nix_args+=(
+    --argstr flakeUri "$flake_uri"
+    --argstr flakeAttr "${flake_attr:-"$(hostname)"}"
+  )
+fi
 
 if [[ -n $target_system ]]; then
   nix_args+=(--argstr system "$target_system")

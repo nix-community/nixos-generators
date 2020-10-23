@@ -1,7 +1,11 @@
 { nixpkgs ? <nixpkgs>
 , configuration ? <nixos-config>
-, format-config ? <format-config>
 , system ? builtins.currentSystem
+
+, formatConfig
+
+, flakeUri ? null
+, flakeAttr ? null
 }:
 let
   module = { lib, ... }: {
@@ -17,12 +21,21 @@ let
       };
     };
   };
+
+  # Will only get evaluated when used, so no worries
+  flake = builtins.getFlake flakeUri;
+  flakeSystem = flake.outputs.packages."${system}".nixosConfigurations."${flakeAttr}" or flake.outputs.nixosConfigurations."${flakeAttr}";
 in
-import "${toString nixpkgs}/nixos/lib/eval-config.nix" {
-  inherit system;
-  modules = [
-    module
-    format-config
-    configuration
-  ];
-}
+  if flakeUri != null then
+    flakeSystem.override (attrs: {
+      modules = attrs.modules ++ [ module formatConfig ];
+    })
+  else
+    import "${toString nixpkgs}/nixos/lib/eval-config.nix" {
+      inherit system;
+      modules = [
+        module
+        formatConfig
+        configuration
+      ];
+    }
