@@ -10,6 +10,7 @@ configuration=${NIXOS_CONFIG:-$libexec_dir/configuration.nix}
 flake_uri=
 flake_attr=
 format_path=
+memory=
 target_system=
 cores=
 run=
@@ -35,6 +36,8 @@ Options:
 * -f, --format NAME: select one of the pre-determined formats
 * --format-path PATH: pass a custom format
 * --list: list the available built-in formats
+* -m, --memory AMOUNT: the amount of memory (in M) that the VM should have
+                       only works for the "vm", "vm-bootloader", and "vm-nogui" formats
 * --run: runs the configuration in a VM
          only works for the "vm" and "vm-no-gui" formats
 * --show-trace: show more detailed nix evaluation location information
@@ -79,7 +82,8 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     -f | --format)
-      format_path=$format_dir/$2.nix
+      format=$2
+      format_path=$format_dir/$format.nix
       shift
       ;;
     --format-path)
@@ -94,10 +98,15 @@ while [[ $# -gt 0 ]]; do
       listFormats
       exit
       ;;
+    -m | --memory)
+      memory=$2
+      shift
+      ;;
     --run)
       run=1
       # default to the VM format
       if [[ -z $format_path ]]; then
+        format="vm"
         format_path=$format_dir/vm.nix
       fi
       ;;
@@ -147,6 +156,14 @@ else
     --argstr flakeUri "$flake_uri"
     --argstr flakeAttr "${flake_attr:-"$(hostname)"}"
   )
+fi
+
+if [[ -n $memory ]]; then
+  if [[ $format != "vm" ]] && [[ $format != "vm-nogui" ]] && [[ $format != "vm-bootloader" ]]; then
+    abort "--memory only works when using the \"vm\" or \"vm-no-gui\" formats"
+  fi
+
+  nix_args+=(--arg memory "$memory")
 fi
 
 if [[ -n $target_system ]]; then

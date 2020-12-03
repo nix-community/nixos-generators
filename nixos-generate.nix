@@ -6,8 +6,11 @@
 
 , flakeUri ? null
 , flakeAttr ? null
+, memory ? null
 }:
 let
+  lib = (import "${toString nixpkgs}/lib/default.nix");
+
   module = { lib, ... }: {
     options = {
       filename = lib.mkOption {
@@ -20,6 +23,9 @@ let
         description = "Declare the default attribute to build";
       };
     };
+
+    config = {
+    } // lib.optionalAttrs (memory != null) { virtualisation.memorySize = memory; };
   };
 
   # Will only get evaluated when used, so no worries
