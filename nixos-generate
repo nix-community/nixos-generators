@@ -41,6 +41,7 @@ Options:
 * --system: specify the target system (eg: x86_64-linux)
 * -o, --out-link: specify the outlink location for nix-build
 * --cores : to control the maximum amount of parallelism. (see nix-build documentation)
+* --option : Passed to to nix-build (see nix-build documentation).
 * -I KEY=VALUE: Add a key to the Nix expression search path.
 USAGE
 }
@@ -77,6 +78,10 @@ while [[ $# -gt 0 ]]; do
     --cores)
       cores=$2
       shift
+      ;;
+    --option)
+      nix_build_args+=("$1" "$2" "$3")
+      shift 2
       ;;
     -f | --format)
       format_path=$format_dir/$2.nix
