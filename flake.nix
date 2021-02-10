@@ -1,6 +1,8 @@
 {
   description = "nixos-generators - one config, multiple formats";
 
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+
   outputs = { self, nixpkgs }: let
     forAllSystems = nixpkgs.lib.genAttrs [ "x86_64-linux" "x86_64-darwin" "i686-linux" "aarch64-linux" ];
   in {
@@ -18,15 +20,6 @@
           wrapProgram $out/bin/nixos-generate \
             --prefix PATH : ${pkgs.lib.makeBinPath (with pkgs; [ jq coreutils findutils ])}
         '';
-      };
-
-      # Currently, you need to mark your configurations with makeOverridable in
-      # order to use nixos-generate on them.
-      nixosConfigurations.example = nixpkgs.lib.makeOverridable nixpkgs.lib.nixosSystem {
-        inherit system;
-        modules = [
-          ./configuration.nix
-        ];
       };
     });
     defaultPackage = forAllSystems (system: self.packages."${system}".nixos-generators);

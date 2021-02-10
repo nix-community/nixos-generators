@@ -1,0 +1,40 @@
+name: "Test"
+on:
+  pull_request:
+  push:
+jobs:
+  build:
+    strategy:
+      matrix:
+        nixPath:
+          - nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-20.09.tar.gz
+          - nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixpkgs-unstable.tar.gz
+        os: [ ubuntu-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v12
+      with:
+        nix_path: "${{ matrix.nixPath }}"
+    - name: Build nix packages
+      run: nix-build --no-out-link
+  build-flake:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+      with:
+          # Nix Flakes doesn't work on shallow clones
+          fetch-depth: 0
+    - uses: cachix/install-nix-action@v12
+      with:
+        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20201221_9fab14a/install
+        extra_nix_config: |
+          experimental-features = nix-command flakes
+          system-features = nixos-test benchmark big-parallel kvm
+    - name: List flake structure
+      run: nix flake show
+    - name: Run unit tests (flake)
+      run: nix build -L
