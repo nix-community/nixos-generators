@@ -21,15 +21,6 @@
             --prefix PATH : ${pkgs.lib.makeBinPath (with pkgs; [ jq coreutils findutils ])}
         '';
       };
-
-      # Currently, you need to mark your configurations with makeOverridable in
-      # order to use nixos-generate on them.
-      nixosConfigurations.example = nixpkgs.lib.makeOverridable nixpkgs.lib.nixosSystem {
-        inherit system;
-        modules = [
-          ./configuration.nix
-        ];
-      };
     });
     defaultPackage = forAllSystems (system: self.packages."${system}".nixos-generators);
 
