@@ -71,7 +71,7 @@ while [[ $# -gt 0 ]]; do
       # string.
       flake="$(echo "$2" | awk -F'#' '{ print $1; }')"
 
-      flake_uri="$(nix flake info --json -- "$flake" | jq -r .url)"
+      flake_uri="$(nix flake metadata --json -- "$flake" | jq -r .url)"
       flake_attr="$(echo "$2" | awk -F'#' '{ print $2; }')"
       shift
       ;;
