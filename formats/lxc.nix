@@ -1,17 +1,22 @@
-{ config, pkgs, lib, modulesPath, ... }: let
-  pkgs2storeContents = l : map (x: { object = x; symlink = "none"; }) l;
-in {
+{ config, pkgs, lib, modulesPath, ... }:
+
+{
   imports = [
     "${toString modulesPath}/virtualisation/lxc-container.nix"
   ];
 
   system.build.tarball = lib.mkForce (pkgs.callPackage <nixpkgs/nixos/lib/make-system-tarball.nix> {
-    contents = [];
     extraArgs = "--owner=0";
     storeContents = [
       {
-        object = config.system.build.toplevel + "/init";
-        symlink = "/sbin/init";
+        object = config.system.build.toplevel;
+        symlink = "none";
+      }
+    ];
+    contents = [
+      {
+        source = config.system.build.toplevel + "/init";
+        target = "/sbin/init";
       }
     ];
 
