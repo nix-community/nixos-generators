@@ -1,6 +1,6 @@
 { config, pkgs, modulesPath, ... }:
 {
-  system.build.metadata = pkgs.callPackage <nixpkgs/nixos/lib/make-system-tarball.nix> {
+  system.build.metadata = pkgs.callPackage "${toString modulesPath}/../lib/make-system-tarball.nix" {
     contents = [{
       source = pkgs.writeText "metadata.yaml" ''
         architecture: x86_64

@@ -1,13 +1,13 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, modulesPath, ... }:
 let
   extlinux-conf-builder =
-    import <nixpkgs/nixos/modules/system/boot/loader/generic-extlinux-compatible/extlinux-conf-builder.nix> {
+    import "${toString modulesPath}/system/boot/loader/generic-extlinux-compatible/extlinux-conf-builder.nix" {
       pkgs = pkgs.buildPackages;
     };
 
 in {
   imports = [
-    <nixpkgs/nixos/modules/installer/cd-dvd/sd-image.nix>
+    "${toString modulesPath}/installer/cd-dvd/sd-image.nix"
   ];
 
   boot.loader = {
