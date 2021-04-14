@@ -1,7 +1,7 @@
-{ config, ... }:
+{ config, modulesPath, ... }:
 {
   imports = [
-    <nixpkgs/nixos/modules/installer/cd-dvd/sd-image-aarch64.nix>
+    "${toString modulesPath}/installer/cd-dvd/sd-image-aarch64.nix"
   ];
 
   formatAttr = "sdImage";

@@ -5,7 +5,7 @@
     "${toString modulesPath}/virtualisation/lxc-container.nix"
   ];
 
-  system.build.tarball = lib.mkForce (pkgs.callPackage <nixpkgs/nixos/lib/make-system-tarball.nix> {
+  system.build.tarball = lib.mkForce (pkgs.callPackage "${toString modulesPath}/../lib/make-system-tarball.nix" {
     extraArgs = "--owner=0";
     storeContents = [
       {

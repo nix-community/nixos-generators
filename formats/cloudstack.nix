@@ -11,7 +11,7 @@
     configFile = pkgs.writeText "configuration.nix"
       ''
         {
-          imports = [ <nixpkgs/nixos/modules/virtualisation/cloudstack-config.nix> ];
+          imports = [ "${toString modulesPath}/virtualisation/cloudstack-config.nix" ];
         }
       '';
   };
