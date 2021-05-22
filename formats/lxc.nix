@@ -1,4 +1,4 @@
-{ config, pkgs, lib, modulesPath, ... }:
+{ config, pkgs, lib, modulesPath, files, ... }:
 
 {
   imports = [
@@ -18,7 +18,7 @@
         source = config.system.build.toplevel + "/init";
         target = "/sbin/init";
       }
-    ];
+    ] ++ files;
 
     extraCommands = "mkdir -p proc sys dev";
   });

@@ -6,6 +6,7 @@
 
 , flakeUri ? null
 , flakeAttr ? null
+, filesJson ? "[]"
 }:
 let
   module = { lib, ... }: {
@@ -29,6 +30,9 @@ in
   if flakeUri != null then
     flakeSystem.override (attrs: {
       modules = attrs.modules ++ [ module formatConfig ];
+      extraArgs = {
+        files = builtins.fromJSON filesJson;
+      };
     })
   else
     import "${toString nixpkgs}/nixos/lib/eval-config.nix" {
@@ -38,4 +42,7 @@ in
         formatConfig
         configuration
       ];
+      extraArgs = {
+        files = builtins.fromJSON filesJson;
+      };
     }

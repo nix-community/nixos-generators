@@ -40,9 +40,12 @@ Options:
 * --show-trace: show more detailed nix evaluation location information
 * --system: specify the target system (eg: x86_64-linux)
 * -o, --out-link: specify the outlink location for nix-build
-* --cores : to control the maximum amount of parallelism. (see nix-build documentation)
-* --option : Passed to to nix-build (see nix-build documentation).
-* -I KEY=VALUE: Add a key to the Nix expression search path.
+* --cores: to control the maximum amount of parallelism. (see nix-build documentation)
+* --option: passed to to nix-build (see nix-build documentation).
+* -I KEY=VALUE: add a key to the Nix expression search path.
+* --files:
+    JSON array of objects with properties `source` and `target to specify files
+    to copy into build artifact
 USAGE
 }
 
@@ -120,6 +123,10 @@ while [[ $# -gt 0 ]]; do
     -o | --out-link)
       nix_build_args+=(--out-link "$2")
       has_outlink=true
+      shift
+      ;;
+    --files)
+      nix_args+=(--argstr filesJson "$2")
       shift
       ;;
     *)

@@ -1,4 +1,4 @@
-{ config, pkgs, lib, modulesPath, ... }: let
+{ config, pkgs, lib, modulesPath, files, ... }: let
 
   clever-tests = builtins.fetchGit {
     url = https://github.com/cleverca22/nix-tests;
@@ -17,7 +17,7 @@ in {
       storeContents = [
         { object = config.system.build.kexec_script; symlink = "/kexec_nixos"; }
       ];
-      contents = [];
+      contents = files;
     };
 
     kexec_tarball_self_extract_script = pkgs.writeTextFile {

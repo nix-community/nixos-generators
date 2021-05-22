@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, lib, pkgs, modulesPath, files, ... }:
 {
   fileSystems."/" = {
     device = "/dev/disk/by-label/nixos";
@@ -16,6 +16,7 @@
     inherit lib config pkgs;
     diskSize = 8192;
     format = "qcow2";
+    contents = files;
   };
 
   formatAttr = "qcow";

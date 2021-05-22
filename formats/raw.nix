@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, lib, pkgs, modulesPath, files, ... }:
 {
   fileSystems."/" = {
     device = "/dev/disk/by-label/nixos";
@@ -14,11 +14,11 @@
     initrd.availableKernelModules = [ "uas" ];
   };
 
-
   system.build.raw = import "${toString modulesPath}/../lib/make-disk-image.nix" {
     inherit lib config pkgs;
     diskSize = 2048;
     format = "raw";
+    contents = files;
   };
 
   formatAttr = "raw";

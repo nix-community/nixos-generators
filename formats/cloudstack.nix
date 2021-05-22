@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, lib, pkgs, modulesPath, files, ... }:
 {
   imports = [
     "${toString modulesPath}/virtualisation/cloudstack-config.nix"
@@ -14,6 +14,7 @@
           imports = [ "${toString modulesPath}/virtualisation/cloudstack-config.nix" ];
         }
       '';
+    contents = files;
   };
 
   formatAttr = "cloudstackImage";

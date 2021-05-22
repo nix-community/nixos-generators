@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, lib, pkgs, modulesPath, files, ... }:
 let
   extlinux-conf-builder =
     import "${toString modulesPath}/system/boot/loader/generic-extlinux-compatible/extlinux-conf-builder.nix" {
@@ -47,7 +47,10 @@ in {
     populateRootCommands = ''
       mkdir -p ./files/boot
       ${extlinux-conf-builder} -t 3 -c ${config.system.build.toplevel} -d ./files/boot
-    '';
+    '' + lib.foldr
+      ({ source, target }: acc: acc + ''mkdir -p "$(dirname ${target})"'' +
+        "\ncp ${source} ${target}\n") ""
+      files;
   };
 
   formatAttr = "sdImage";
