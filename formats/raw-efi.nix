@@ -11,7 +11,7 @@
   system.build.raw = lib.mkOverride 999 (import "${toString modulesPath}/../lib/make-disk-image.nix" {
     inherit lib config pkgs;
     partitionTableType = "efi";
-    diskSize = 2048;
+    diskSize = "auto";
     format = "raw";
   });
 }
