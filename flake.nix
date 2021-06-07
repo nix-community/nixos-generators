@@ -6,6 +6,14 @@
   outputs = { self, nixpkgs }: let
     forAllSystems = nixpkgs.lib.genAttrs [ "x86_64-linux" "x86_64-darwin" "i686-linux" "aarch64-linux" ];
   in {
+
+    # export all generator formats in ./formats
+    nixosModules = nixpkgs.lib.mapAttrs' (file: _: {
+      name = nixpkgs.lib.removeSuffix ".nix" file;
+      # The exported module should include the internal format* options
+      value.imports = [ (./formats + "/${file}") ./format-module.nix ];
+    }) (builtins.readDir ./formats);
+
     # Packages
     packages = forAllSystems (system: let
       pkgs = nixpkgs.legacyPackages."${system}";
