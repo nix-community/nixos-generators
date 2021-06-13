@@ -1,7 +1,7 @@
 { config, pkgs, lib, modulesPath, ... }: let
 
   clever-tests = builtins.fetchGit {
-    url = https://github.com/cleverca22/nix-tests;
+    url = "https://github.com/cleverca22/nix-tests";
     rev = "a9a316ad89bfd791df4953c1a8b4e8ed77995a18"; # master on 2021-06-13
   };
 in {
