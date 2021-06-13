@@ -2,7 +2,7 @@
 
   clever-tests = builtins.fetchGit {
     url = https://github.com/cleverca22/nix-tests;
-    rev = "4761ec62c4056f2b1df4d468a1e129b808734221"; #master on 2018-05-20
+    rev = "a9a316ad89bfd791df4953c1a8b4e8ed77995a18"; # master on 2021-06-13
   };
 in {
   imports = [
