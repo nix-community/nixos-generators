@@ -1,5 +1,20 @@
 {
   "nodes": {
+    "nixlib": {
+      "locked": {
+        "lastModified": 1624148832,
+        "narHash": "sha256-HlXFOXPklqUF2eGPPm8kgfvU2psksLDaVGa2JMnpPTo=",
+        "owner": "divnix",
+        "repo": "nixpkgs.lib",
+        "rev": "95c4b09c919abfbadc24386008541db16ba712d8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "divnix",
+        "repo": "nixpkgs.lib",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1619285658,
@@ -18,6 +33,7 @@
     },
     "root": {
       "inputs": {
+        "nixlib": "nixlib",
         "nixpkgs": "nixpkgs"
       }
     }
