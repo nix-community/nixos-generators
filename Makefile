@@ -3,6 +3,8 @@ SHARE ?= $(PREFIX)/share/nixos-generator
 
 all:
 
+SOURCES = formats format-module.nix configuration.nix nixos-generate.nix
+
 install:
 	mkdir -p $(PREFIX)/bin $(SHARE)
 	sed \
@@ -10,4 +12,4 @@ install:
 		-e "s|#!/usr/bin/env.*|#!/usr/bin/env bash|" \
 		nixos-generate > $(PREFIX)/bin/nixos-generate
 	chmod 755 $(PREFIX)/bin/nixos-generate
-	cp -r formats configuration.nix nixos-generate.nix $(SHARE)
+	cp -r $(SOURCES) $(SHARE)
