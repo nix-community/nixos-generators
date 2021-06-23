@@ -2,7 +2,7 @@
   description = "nixos-generators - one config, multiple formats";
 
   # Lib dependency
-  inputs.nixlib.url = "github:divnix/nixpkgs.lib";
+  inputs.nixlib.url = "github:nix-community/nixpkgs.lib";
 
   # Bin dependency
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
