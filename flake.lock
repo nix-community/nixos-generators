@@ -2,15 +2,15 @@
   "nodes": {
     "nixlib": {
       "locked": {
-        "lastModified": 1624148832,
-        "narHash": "sha256-HlXFOXPklqUF2eGPPm8kgfvU2psksLDaVGa2JMnpPTo=",
-        "owner": "divnix",
+        "lastModified": 1624753224,
+        "narHash": "sha256-ZUEcPzgU1w8ZYeEgfcpzeciYcZShQZbEfRN2tV+K2yQ=",
+        "owner": "nix-community",
         "repo": "nixpkgs.lib",
-        "rev": "95c4b09c919abfbadc24386008541db16ba712d8",
+        "rev": "7b4dc08734c5c4703b22b9c780417042e1c8f020",
         "type": "github"
       },
       "original": {
-        "owner": "divnix",
+        "owner": "nix-community",
         "repo": "nixpkgs.lib",
         "type": "github"
       }
