@@ -7,7 +7,7 @@ let
 
 in {
   imports = [
-    "${toString modulesPath}/installer/cd-dvd/sd-image.nix"
+    "${toString modulesPath}/installer/sd-card/sd-image.nix"
   ];
 
   boot.loader = {
