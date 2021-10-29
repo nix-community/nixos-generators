@@ -36,7 +36,7 @@ Options:
 * --format-path PATH: pass a custom format
 * --list: list the available built-in formats
 * --run: runs the configuration in a VM
-         only works for the "vm" and "vm-no-gui" formats
+         only works for the "vm" and "vm-nogui" formats
 * --show-trace: show more detailed nix evaluation location information
 * --system: specify the target system (eg: x86_64-linux)
 * -o, --out-link: specify the outlink location for nix-build
