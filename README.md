@@ -44,6 +44,7 @@ kexec-bundle | same as before, but it's just an executable
 lxc | create a tarball which is importable as an lxc container, use together with lxc-metadata
 lxc-metadata | the necessary metadata for the lxc image to start, usage: lxc image import $(nixos-generate -f lxc-metadata) $(nixos-generate -f lxc)
 openstack | qcow2 image for openstack
+proxmox | [VMA}(https://pve.proxmox.com/wiki/VMA) file for proxmox
 qcow | qcow2 image
 raw | raw image with bios/mbr
 raw-efi | raw image with efi support
