@@ -10,13 +10,27 @@
   outputs = { self, nixpkgs, nixlib }:
 
   # Library modules (depend on nixlib)
-  {
+  rec {
     # export all generator formats in ./formats
     nixosModules = nixlib.lib.mapAttrs' (file: _: {
       name = nixlib.lib.removeSuffix ".nix" file;
       # The exported module should include the internal format* options
       value.imports = [ (./formats + "/${file}") ./format-module.nix ];
+      # !!! TODO: is there a better way to extract formatAttr for the format?
+      value.formatAttr = (nixpkgs.legacyPackages.x86_64-linux.callPackage (import (./formats + "/${file}")){modulesPath = "";} ).formatAttr;
     }) (builtins.readDir ./formats);
+
+    nixosGenerate = { system, pkgs, modules, format }:
+    let 
+      formatModule = builtins.getAttr format nixosModules;
+      formatAttr = formatModule.formatAttr;
+    in
+    builtins.getAttr formatAttr (nixpkgs.lib.nixosSystem { 
+      inherit system pkgs;
+      modules = [
+        formatModule
+      ] ++ modules;
+    }).config.system.build;
   }
 
   //
