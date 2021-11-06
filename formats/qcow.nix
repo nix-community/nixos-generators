@@ -1,5 +1,10 @@
 { config, lib, pkgs, modulesPath, ... }:
 {
+  # for virtio kernel drivers
+  imports = [
+    "${toString modulesPath}/profiles/qemu-guest.nix"
+  ];
+
   fileSystems."/" = {
     device = "/dev/disk/by-label/nixos";
     autoResize = true;
