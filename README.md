@@ -20,10 +20,18 @@ or mount & boot in a virtual machine.
 
 # Installation
 
-nixos-generators can be installed from source into the user profile like this:
+nixos-generators is part of [nixpkgs](https://search.nixos.org/packages?channel=unstable&show=nixos-generators&from=0&size=50&sort=relevance&type=packages&query=nixos-generator) and can be installed from there.
+
+nixos-generators can be also installed from source into the user profile like this:
 
 ```console
 nix-env -f https://github.com/nix-community/nixos-generators/archive/master.tar.gz -i
+```
+
+or run from the nix flake without installing:
+
+```
+nix run github:nix-community/nixos-generators -- --help
 ```
 
 ## Supported formats
