@@ -18,11 +18,20 @@
       value.imports = [ (./formats + "/${file}") ./format-module.nix ];
     }) (builtins.readDir ./formats);
 
-    nixosGenerate = { system, pkgs, modules, format }:
+    # example useage in flakes:
+    #   outputs = { self, nixpkgs, nixos-generators, ...}: {
+    #     vmware = nixos-generators.nixosGenerate {
+    #       pkgs = nixpkgs.legacyPackages.x86_64-linux;
+    #       modules = [./configuration.nix];
+    #       format = "vmware";
+    #   };
+    # }
+    nixosGenerate = { pkgs, modules, format }:
     let 
       formatModule = builtins.getAttr format nixosModules;
       image = nixpkgs.lib.nixosSystem {
-        inherit system pkgs;
+        inherit pkgs;
+        system = pkgs.system;
         modules = [
           formatModule
         ] ++ modules;
