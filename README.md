@@ -90,6 +90,39 @@ For more details about this have a look at :
 Once you've run `nixos-rebuild` with theses options,
 you can use the `--system` option to create images for other architectures.
 
+## Using in a Flake
+
+`nixos-generators` can be included as a `Flake` input and provides
+a `nixos-generate` function for building images as `Flake` outputs. This
+approach pins all dependencies and allows for conveniently defining multiple
+output types based on one config. 
+
+An example `flake.nix` demonstrating this approach is below. `vmware` or
+`virtualbox` images can be built from the same `configuration.nix` by running
+`nix build .#vmware` or `nix build .#virtualbox`
+
+```
+inputs = {
+  nixpkgs = "nixpkgs/nixos-unstable";
+  nixos-generators = {
+    url = "github:nix-community/nixos-generators";
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
+}
+outputs = { self, nixpkgs, nixos-generators, ... }: {
+  vmware = nixos-generators.nixosGenerate {
+    pkgs = nixpkgs.legacyPackages.x86_64-linux;
+    modules = [./configuration.nix];
+    format = "vmware";
+  };
+  vbox = nixos-generators.nixosGenerate {
+    pkgs = nixpkgs.legacyPackages.x86_64-linux;
+    modules = [./configuration.nix];
+    format = "virtualbox";
+  };
+}
+```
+
 ### License
 
 This project is licensed under the [MIT License](LICENSE).
