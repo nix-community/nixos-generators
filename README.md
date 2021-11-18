@@ -102,23 +102,30 @@ An example `flake.nix` demonstrating this approach is below. `vmware` or
 `nix build .#vmware` or `nix build .#virtualbox`
 
 ```
-inputs = {
-  nixpkgs = "nixpkgs/nixos-unstable";
-  nixos-generators = {
-    url = "github:nix-community/nixos-generators";
-    inputs.nixpkgs.follows = "nixpkgs";
+{
+  inputs = {
+    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixos-generators = {
+      url = "github:nix-community/nixos-generators";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
-}
-outputs = { self, nixpkgs, nixos-generators, ... }: {
-  vmware = nixos-generators.nixosGenerate {
-    pkgs = nixpkgs.legacyPackages.x86_64-linux;
-    modules = [./configuration.nix];
-    format = "vmware";
-  };
-  vbox = nixos-generators.nixosGenerate {
-    pkgs = nixpkgs.legacyPackages.x86_64-linux;
-    modules = [./configuration.nix];
-    format = "virtualbox";
+  outputs = { self, nixpkgs, nixos-generators, ... }: {
+    packages.x86_64-linux = {
+      vmware = nixos-generators.nixosGenerate {
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        modules = [
+          # you can include your own nixos configuration here, i.e.
+          # ./configuration.nix
+        ];
+        format = "vmware";
+      };
+      vbox = nixos-generators.nixosGenerate {
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        modules = [];
+        format = "virtualbox";
+      };
+    };
   };
 }
 ```
