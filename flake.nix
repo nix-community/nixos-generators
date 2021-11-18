@@ -18,7 +18,7 @@
       value.imports = [ (./formats + "/${file}") ./format-module.nix ];
     }) (builtins.readDir ./formats);
 
-    # example useage in flakes:
+    # example usage in flakes:
     #   outputs = { self, nixpkgs, nixos-generators, ...}: {
     #     vmware = nixos-generators.nixosGenerate {
     #       pkgs = nixpkgs.legacyPackages.x86_64-linux;
