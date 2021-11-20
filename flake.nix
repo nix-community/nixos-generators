@@ -10,13 +10,35 @@
   outputs = { self, nixpkgs, nixlib }:
 
   # Library modules (depend on nixlib)
-  {
+  rec {
     # export all generator formats in ./formats
     nixosModules = nixlib.lib.mapAttrs' (file: _: {
       name = nixlib.lib.removeSuffix ".nix" file;
       # The exported module should include the internal format* options
       value.imports = [ (./formats + "/${file}") ./format-module.nix ];
     }) (builtins.readDir ./formats);
+
+    # example usage in flakes:
+    #   outputs = { self, nixpkgs, nixos-generators, ...}: {
+    #     vmware = nixos-generators.nixosGenerate {
+    #       pkgs = nixpkgs.legacyPackages.x86_64-linux;
+    #       modules = [./configuration.nix];
+    #       format = "vmware";
+    #   };
+    # }
+    nixosGenerate = { pkgs, format,  modules ? [ ] }:
+    let 
+      formatModule = builtins.getAttr format nixosModules;
+      image = nixpkgs.lib.nixosSystem {
+        inherit pkgs;
+        system = pkgs.system;
+        modules = [
+          formatModule
+        ] ++ modules;
+      };
+    in
+      image.config.system.build.${image.config.formatAttr};
+
   }
 
   //
