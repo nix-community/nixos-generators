@@ -26,7 +26,7 @@
     #       format = "vmware";
     #   };
     # }
-    nixosGenerate = { pkgs, modules, format }:
+    nixosGenerate = { pkgs, format,  modules ? [ ] }:
     let 
       formatModule = builtins.getAttr format nixosModules;
       image = nixpkgs.lib.nixosSystem {

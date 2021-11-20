@@ -122,7 +122,6 @@ An example `flake.nix` demonstrating this approach is below. `vmware` or
       };
       vbox = nixos-generators.nixosGenerate {
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
-        modules = [];
         format = "virtualbox";
       };
     };
