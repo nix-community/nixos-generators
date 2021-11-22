@@ -13,7 +13,7 @@ jobs:
       with:
           # Nix Flakes doesn't work on shallow clones
           fetch-depth: 0
-    - uses: cachix/install-nix-action@v15
+    - uses: cachix/install-nix-action@v16
     - name: List flake structure
       run: nix flake show
     - name: Run unit tests (flake)
