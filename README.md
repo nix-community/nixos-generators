@@ -109,7 +109,7 @@ An example `flake.nix` demonstrating this approach is below. `vmware` or
 `virtualbox` images can be built from the same `configuration.nix` by running
 `nix build .#vmware` or `nix build .#virtualbox`
 
-```
+```nix
 {
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
