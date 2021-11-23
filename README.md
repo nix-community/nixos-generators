@@ -28,6 +28,12 @@ nixos-generators can be also installed from source into the user profile like th
 nix-env -f https://github.com/nix-community/nixos-generators/archive/master.tar.gz -i
 ```
 
+or for flakes users like this:
+
+```console
+nix profile install github:nix-community/nixos-generators
+```
+
 or run from the nix flake without installing:
 
 ```
