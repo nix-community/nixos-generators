@@ -55,6 +55,7 @@ install-iso-hyperv | Installer ISO with enabled hyper-v support
 iso | ISO
 kexec | kexec tarball (extract to / and run /kexec_nixos)
 kexec-bundle | same as before, but it's just an executable
+kubevirt | KubeVirt image
 lxc | create a tarball which is importable as an lxc container, use together with lxc-metadata
 lxc-metadata | the necessary metadata for the lxc image to start, usage: lxc image import $(nixos-generate -f lxc-metadata) $(nixos-generate -f lxc)
 openstack | qcow2 image for openstack
