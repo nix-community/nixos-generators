@@ -80,7 +80,7 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     --option)
-      nix_build_args+=("$1" "$2" "$3")
+      nix_build_args+=("$2" "$3")
       shift 2
       ;;
     -f | --format)
