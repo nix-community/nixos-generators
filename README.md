@@ -60,6 +60,7 @@ lxc | create a tarball which is importable as an lxc container, use together wit
 lxc-metadata | the necessary metadata for the lxc image to start, usage: lxc image import $(nixos-generate -f lxc-metadata) $(nixos-generate -f lxc)
 openstack | qcow2 image for openstack
 proxmox | [VMA](https://pve.proxmox.com/wiki/VMA) file for proxmox
+proxmox-lxc | LXC template for proxmox
 qcow | qcow2 image
 raw | raw image with bios/mbr
 raw-efi | raw image with efi support
