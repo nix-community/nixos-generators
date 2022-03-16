@@ -13,12 +13,12 @@ in {
   ];
 
   system.build = rec {
-    kexec_tarball = pkgs.callPackage "${toString modulesPath}/../lib/make-system-tarball.nix" {
+    kexec_tarball = lib.mkForce (pkgs.callPackage "${toString modulesPath}/../lib/make-system-tarball.nix" {
       storeContents = [
         { object = config.system.build.kexec_script; symlink = "/kexec_nixos"; }
       ];
       contents = [];
-    };
+    });
 
     kexec_tarball_self_extract_script = pkgs.writeTextFile {
       executable = true;
