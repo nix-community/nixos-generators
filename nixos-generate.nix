@@ -15,9 +15,9 @@ let
   flakeSystem = flake.outputs.packages."${system}".nixosConfigurations."${flakeAttr}" or flake.outputs.nixosConfigurations."${flakeAttr}";
 in
   if flakeUri != null then
-    flakeSystem.override (attrs: {
-      modules = attrs.modules ++ [ module formatConfig ];
-    })
+    flakeSystem.extendModules {
+      modules = [ module formatConfig ];
+    }
   else
     import "${toString nixpkgs}/nixos/lib/eval-config.nix" {
       inherit system;
