@@ -40,7 +40,7 @@ in {
     kexec_bundle = pkgs.runCommand "kexec_bundle" {} ''
       cat \
         ${kexec_tarball_self_extract_script} \
-        ${config.system.build.kexec_tarball}/tarball/nixos-system-${kexec_tarball.system}.tar.xz \
+        ${config.system.build.kexec_tarball}/tarball/nixos-system-${config.system.build.kexec_tarball.system}.tar.xz \
         > $out
       chmod +x $out
     '';
