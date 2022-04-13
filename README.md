@@ -148,3 +148,9 @@ An example `flake.nix` demonstrating this approach is below. `vmware` or
 ### License
 
 This project is licensed under the [MIT License](LICENSE).
+
+# FAQ
+
+#### No space left on device
+
+this means either /tmp, /run/user/$UID or your TMPFS runs full. sometimes setting TMPDIR to some other location can help, sometimes /tmp needs to be on a bigger partition (not a tmpfs).
