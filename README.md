@@ -48,6 +48,7 @@ amazon | Amazon EC2 image
 azure | Microsoft azure image (Generation 1 / VHD)
 cloudstack | qcow2 image for cloudstack
 do | Digital Ocean image
+docker | Docker image (uses systemd to run, probably only works in podman)
 gce | Google Compute image
 hyperv | Hyper-V Image (Generation 2 / VHDX)
 install-iso | Installer ISO
