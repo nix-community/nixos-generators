@@ -8,7 +8,7 @@ let
       IFS=';t' read -r _ rows cols _ < /dev/tty
       stty "$old"
       stty cols "$cols" rows "$rows"
-    ]
+    fi
   ''; # https://unix.stackexchange.com/questions/16578/resizable-serial-console-window
 in {
   imports = [
