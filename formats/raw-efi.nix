@@ -8,6 +8,11 @@
     efiInstallAsRemovable = true;
   };
 
+  fileSystems."/boot" = {
+    device = "/dev/vda1";
+    fsType = "vfat";
+  };
+
   system.build.raw = lib.mkOverride 999 (import "${toString modulesPath}/../lib/make-disk-image.nix" {
     inherit lib config pkgs;
     partitionTableType = "efi";
