@@ -169,7 +169,7 @@ out=$(nix-build "${nix_args[@]}" "${nix_build_args[@]}" -A "config.system.build.
 
 if [[ -z $run ]]; then
   # show the first file, ignoring nix-support
-  find "$out" -wholename "$filename" -type f -print -quit
+  find "$out" -wholename "$filename" -xtype f -print -quit
 else
   runner=$(find "$out"/bin -type l -print -quit)
   exec "$runner"
