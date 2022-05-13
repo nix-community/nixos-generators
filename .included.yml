@@ -22,6 +22,9 @@ stages:
         - mkdir $uploadPath
     script:
         - nix-shell --command './nixos-generate -f $formats -I nixpkgs=channel:nixos-$nixpkgs_ver' |& tee $uploadPath/build.log
+        # Last line of output should be the path of a regular file (or symlink
+        # to a regular file) in the Nix store.
+        - storePath=$(tail -n 1 $uploadPath/build.log) && test -f "$storePath" && test "/nix/store/${storePath#/nix/store/}" = "$storePath"
         - mv $(realpath result) $uploadPath
     artifacts:
         name: "$uploadPath"
