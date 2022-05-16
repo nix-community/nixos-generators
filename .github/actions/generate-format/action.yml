@@ -1,0 +1,37 @@
+name: Generate Format
+description: Build a NixOS configuration using the specified nixos-generators format
+inputs:
+  nix-exec-path:
+    description: Path to the nix executable
+    default: nix
+  format:
+    description: nixos-generate format name
+  system:
+    description: Target nixpkgs system (e.g. x86_64-linux)
+    default: x86_64-linux
+  nixpkgs-name:
+    description: Flake input name for the target nixpkgs version
+    default: nixpkgs
+  nixpkgs:
+    description: Search path/URL for the target nixpkgs
+    default: 'https://github.com/nixos/nixpkgs/archive/nixpkgs-unstable.tar.gz'
+  force-build:
+    description: Build the target format even if no corresponding flake check exists
+  flake:
+    description: Nix flake URL
+    default: ${{ github.workspace }}
+runs:
+  using: composite
+  steps:
+  - name: Build the "${{ inputs.format }}" format
+    id: generate
+    shell: bash
+    run: ${{ github.action_path }}/generate-format.sh
+    env:
+      NIX_EXEC_PATH: ${{ inputs.nix-exec-path }}
+      FORMAT: ${{ inputs.format }}
+      SYSTEM: ${{ inputs.system }}
+      NIXPKGS_NAME: ${{ inputs.nixpkgs-name }}
+      NIXPKGS: ${{ inputs.nixpkgs }}
+      FORCE_BUILD: ${{ inputs.force-build }}
+      FLAKE: ${{ inputs.flake }}

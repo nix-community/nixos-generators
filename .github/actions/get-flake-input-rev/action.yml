@@ -1,0 +1,27 @@
+name: Get Rev
+description: Get a Nix flake input revision from the flake lock file
+inputs:
+  nix-exec-path:
+    description: Path to the nix executable
+    default: nix
+  flake-input-name:
+    description: Name of the flake input whose revision should be retrieved
+    default: nixpkgs
+  flake:
+    description: Nix flake URL
+    default: ${{ github.workspace }}
+outputs:
+  rev:
+    description: Locked revision of the flake input
+    value: ${{ steps.get-rev.outputs.rev }}
+runs:
+  using: composite
+  steps:
+  - name: Get flake input revision for "${{ inputs.flake-input-name }}" from ${{ inputs.flake-lock-path }}
+    id: get-rev
+    shell: bash
+    env:
+      NIX_EXEC_PATH: ${{ inputs.nix-exec-path }}
+      FLAKE_INPUT_NAME: ${{ inputs.flake-input-name }}
+      FLAKE: ${{ inputs.flake }}
+    run: ${{ github.action_path }}/get-flake-input-rev.sh

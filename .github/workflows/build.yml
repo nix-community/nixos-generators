@@ -11,10 +11,127 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-          # Nix Flakes doesn't work on shallow clones
-          fetch-depth: 0
+        # Nix Flakes doesn't work on shallow clones
+        fetch-depth: 0
     - uses: cachix/install-nix-action@v17
     - name: List flake structure
       run: nix flake show
     - name: Run unit tests (flake)
       run: nix build -L
+  check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - uses: cachix/install-nix-action@v17
+    - name: Run flake checks
+      run: nix flake check --no-build --keep-going
+  introspect:
+    runs-on: ubuntu-latest
+    outputs:
+      nixpkgs-rev: ${{ steps.nixpkgs-rev.outputs.rev }}
+      nixos-rev: ${{ steps.nixos-rev.outputs.rev }}
+      formats: ${{ steps.list-formats.outputs.formats }}
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - uses: cachix/install-nix-action@v17
+    - name: Get nixpkgs flake input rev
+      id: nixpkgs-rev
+      uses: ./.github/actions/get-flake-input-rev
+      with:
+        flake-input-name: nixpkgs
+    - name: Get nixos flake input rev
+      id: nixos-rev
+      uses: ./.github/actions/get-flake-input-rev
+      with:
+        flake-input-name: nixos
+    - name: List available formats
+      id: list-formats
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      uses: ./.github/actions/list-formats
+  default-formats:
+    strategy:
+      matrix:
+        format:
+        - amazon
+        - docker
+        - iso
+        - kexec-bundle
+        nixpkgs-name:
+        - nixpkgs
+        - nixos
+        include:
+        - nixpkgs-name: nixpkgs
+          nixpkgs: 'https://github.com/nixos/nixpkgs/archive/${{ needs.introspect.outputs.nixpkgs-rev }}.tar.gz'
+        - nixpkgs-name: nixos
+          nixpkgs: 'https://github.com/nixos/nixpkgs/archive/${{ needs.introspect.outputs.nixos-rev }}.tar.gz'
+        - format: kexec-bundle
+          force-build: yes
+    runs-on: ubuntu-latest
+    needs: [ 'check', 'introspect' ]
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - uses: cachix/install-nix-action@v17
+      with:
+        # kvm required for a number of formats; big-parallel required for
+        # proxmox and possibly others.
+        extra_nix_config: |
+          system-features = big-parallel kvm
+    - name: Build the "${{ matrix.format }}" format
+      id: generate
+      uses: ./.github/actions/generate-format
+      with:
+        format: ${{ matrix.format }}
+        system: ${{ matrix.system }}
+        nixpkgs-name: ${{ matrix.nixpkgs-name }}
+        nixpkgs: ${{ matrix.nixpkgs }}
+        force-build: ${{ matrix.force-build }}
+  all-formats:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    strategy:
+      matrix:
+        format: ${{ needs.introspect.outputs.formats && fromJSON(needs.introspect.outputs.formats) }}
+        nixpkgs-name:
+        - nixpkgs
+        - nixos
+        include:
+        - nixpkgs-name: nixpkgs
+          nixpkgs: 'https://github.com/nixos/nixpkgs/archive/${{ needs.introspect.outputs.nixpkgs-rev }}.tar.gz'
+        - nixpkgs-name: nixos
+          nixpkgs: 'https://github.com/nixos/nixpkgs/archive/${{ needs.introspect.outputs.nixos-rev }}.tar.gz'
+        - format: kexec-bundle
+          force-build: yes
+        - format: sd-aarch64-installer
+          system: aarch64-linux
+        - format: sd-aarch64
+          system: aarch64-linux
+    runs-on: ubuntu-latest
+    needs: [ 'check', 'introspect' ]
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    # set up qemu if we are targeting a non-native system
+    - uses: docker/setup-qemu-action@v2
+      if: ${{ matrix.system }}
+    - uses: cachix/install-nix-action@v17
+      with:
+        # kvm required for a number of formats; big-parallel required for
+        # proxmox and possibly others.
+        extra_nix_config: |
+          system-features = big-parallel kvm
+          extra-platforms = ${{ matrix.system }}
+    - name: Build the "${{ matrix.format }}" format
+      id: generate
+      uses: ./.github/actions/generate-format
+      with:
+        format: ${{ matrix.format }}
+        system: ${{ matrix.system }}
+        nixpkgs-name: ${{ matrix.nixpkgs-name }}
+        nixpkgs: ${{ matrix.nixpkgs }}
+        force-build: ${{ matrix.force-build }}

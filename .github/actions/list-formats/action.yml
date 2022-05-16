@@ -1,0 +1,27 @@
+name: List Formats
+description: List available nixos-generators formats
+inputs:
+  nixos-generate-exec-path:
+    description: Path to the nixos-generate executable
+    default: ${{ github.workspace }}/nixos-generate
+  nix-exec-path:
+    description: Path to the nix executable
+    default: nix
+  flake:
+    description: Nix flake URL
+    default: ${{ github.workspace }}
+outputs:
+  formats:
+    description: Available nixos-generators formats
+    value: ${{ steps.list-formats.outputs.formats }}
+runs:
+  using: composite
+  steps:
+  - name: List available nixos-generators formats
+    id: list-formats
+    shell: bash
+    env:
+      NIXOS_GENERATE_EXEC_PATH: ${{ inputs.nixos-generate-exec-path }}
+      NIX_EXEC_PATH: ${{ inputs.nix-exec-path }}
+      FLAKE: ${{ inputs.flake }}
+    run: ${{ github.action_path }}/list-formats.sh
