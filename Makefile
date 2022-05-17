@@ -3,7 +3,7 @@ SHARE ?= $(PREFIX)/share/nixos-generator
 
 all:
 
-SOURCES = formats format-module.nix configuration.nix nixos-generate.nix
+SOURCES = formats format-module.nix configuration.nix lib.nix nixos-generate.nix
 
 install:
 	mkdir -p $(PREFIX)/bin $(SHARE)
