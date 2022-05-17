@@ -74,12 +74,19 @@
         buildInputs = with pkgs; [ jq coreutils findutils ];
       });
 
-      # Make it runnable with `nix app`
-      apps = forAllSystems (system: {
+      # Make it runnable with `nix run`
+      apps = forAllSystems (system: let
         nixos-generate = {
           type    = "app";
           program = "${self.packages."${system}".nixos-generators}/bin/nixos-generate";
         };
+      in {
+        inherit nixos-generate;
+
+        # Nix >= 2.7 flake output schema uses `apps.<system>.default` instead
+        # of `defaultApp.<system>` to signify the default app (the thing that
+        # gets run with `nix run . -- <args>`)
+        default = nixos-generate;
       });
 
       defaultApp = forAllSystems (system: self.apps."${system}".nixos-generate);
