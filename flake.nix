@@ -6,8 +6,9 @@
 
   # Bin dependency
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs.nixos.url = "github:NixOS/nixpkgs/nixos-21.11";
 
-  outputs = { self, nixpkgs, nixlib }:
+  outputs = { self, nixpkgs, nixos, nixlib }@inputs:
 
   # Library modules (depend on nixlib)
   rec {
@@ -18,16 +19,15 @@
       value.imports = [ (./formats + "/${file}") ./format-module.nix ];
     }) (builtins.readDir ./formats);
 
-    # example usage in flakes:
-    #   outputs = { self, nixpkgs, nixos-generators, ...}: {
-    #     vmware = nixos-generators.nixosGenerate {
-    #       pkgs = nixpkgs.legacyPackages.x86_64-linux;
-    #       modules = [./configuration.nix];
-    #       format = "vmware";
-    #   };
-    # }
-    nixosGenerate = { pkgs, format,  specialArgs ? { }, modules ? [ ] }:
-    let 
+    nixosGenerate' = {
+      format
+    , system
+    , nixpkgs ? inputs.nixpkgs
+    , pkgs ? nixpkgs.legacyPackages.${system}
+    , specialArgs ? { }
+    , modules ? [ ]
+    }:
+    let
       formatModule = builtins.getAttr format nixosModules;
       image = nixpkgs.lib.nixosSystem {
         inherit pkgs specialArgs;
@@ -36,13 +36,25 @@
           formatModule
         ] ++ modules;
       };
-    in
+    in assert system == pkgs.system;
       image.config.system.build.${image.config.formatAttr};
 
+    # example usage in flakes:
+    #   outputs = { self, nixpkgs, nixos-generators, ...}: {
+    #     vmware = nixos-generators.nixosGenerate {
+    #       pkgs = nixpkgs.legacyPackages.x86_64-linux;
+    #       modules = [./configuration.nix];
+    #       format = "vmware";
+    #   };
+    # }
+    nixosGenerate = { pkgs, format, specialArgs ? { }, modules ? [ ] }:
+      nixosGenerate' {
+        system = pkgs.system;
+        inherit pkgs format specialArgs modules;
+      };
   }
 
   //
-
 
   # Binary and Devshell outputs (depend on nixpkgs)
   (
@@ -90,6 +102,101 @@
       });
 
       defaultApp = forAllSystems (system: self.apps."${system}".nixos-generate);
+
+      checks = let
+        # No way to limit `nix flake check` to a subset of supported systems;
+        # see https://github.com/NixOS/nix/issues/6398.
+        forCheckSystems = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" ];
+
+        checksForNixpkgs =
+          system:
+          {
+            input,
+            id,
+            modules ? (fetchModules system id)
+          }:
+        let
+          pkgs = input.legacyPackages.${system};
+          generateFormat = format: self.nixosGenerate' {
+            inherit format system pkgs;
+            nixpkgs = input;
+          };
+          #formatModules = builtins.removeAttrs self.nixosModules exclude;
+        in nixlib.lib.mapAttrs' (format: _: let
+          name = "${format}-${id}";
+          diag = ''evaluating format "${format}" using nixpkgs input "${id}" on system "${system}"'';
+          value = nixlib.lib.trace diag (generateFormat format);
+        in {
+          inherit name value;
+        }) modules;
+
+        fetchModules = let
+          excludeCommon = [
+            # error:
+            #      Failed assertions:
+            #      - Mountpoint '/': 'autoResize = true' is not supported for 'fsType = "auto"': fsType has to be explicitly set and only the ext filesystems and f2fs support it.
+            "cloudstack"
+
+            # error (ignored): error: cannot look up '<nixpkgs/nixos/lib/make-system-tarball.nix>' in pure evaluation mode (use '--impure' to override)
+            #
+            #       at /nix/store/0b099b46lb9dmhwzyc2zgjk8lp8d9rfq-source/kexec/kexec.nix:42:49:
+            #
+            #           41|   '';
+            #           42|   system.build.kexec_tarball = pkgs.callPackage <nixpkgs/nixos/lib/make-system-tarball.nix> {
+            #             |                                                 ^
+            #           43|     storeContents = [
+            "kexec"
+            "kexec-bundle"
+          ];
+
+          excludeNixpkgs = [
+            # error: path '/nix/store/0bsydzh62cn1by07j5cjy28crbnbc5wz-google-guest-configs-20211116.00.drv' is not valid)
+            "gce"
+
+            # Compilation error in some prerequisite or other.
+            "proxmox"
+          ];
+
+          excludeNixos = [
+            # error: getting status of '/nix/store/<...>/nixos/modules/virtualisation/kubevirt.nix': No such file or directory
+            "kubevirt"
+
+            # error: getting status of '/nix/store/<...>/nixos/modules/virtualisation/proxmox-lxc.nix': No such file or directory
+            "proxmox-lxc"
+          ];
+
+          aarch64Only = [ "sd-aarch64" "sd-aarch64-installer" ];
+
+          baseModules = builtins.removeAttrs self.nixosModules excludeCommon;
+          nixpkgsModules = builtins.removeAttrs baseModules excludeNixpkgs;
+          nixosModules = builtins.removeAttrs baseModules excludeNixos;
+
+          matrix = {
+            "x86_64-linux" = {
+              "nixpkgs" = builtins.removeAttrs nixpkgsModules aarch64Only;
+              "nixos" = builtins.removeAttrs nixosModules aarch64Only;
+            };
+
+            "aarch64-linux" = {
+              "nixpkgs" = nixlib.lib.getAttrs aarch64Only nixpkgsModules;
+              "nixos" = nixlib.lib.getAttrs aarch64Only nixosModules;
+            };
+          };
+        in system: id: matrix.${system}.${id};
+      in
+      forCheckSystems (system: let
+        checksForNixpkgs' = checksForNixpkgs system;
+
+        nixpkgsChecks = checksForNixpkgs' {
+          input = nixpkgs;
+          id = "nixpkgs";
+        };
+
+        nixosChecks = checksForNixpkgs' {
+          input = nixos;
+          id = "nixos";
+        };
+      in nixpkgsChecks // nixosChecks);
     }
   );
 }
