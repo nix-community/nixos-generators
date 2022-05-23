@@ -98,13 +98,52 @@ NIX_PATH=nixpkgs=../nixpkgs nixos-generate -f do
 
 ## Cross Compiling
 
-To cross compile nixos images for other system you have
-to configure `boot.binfmtMiscRegistrations` on your host system.
+To cross compile nixos images for other architectures you have to configure
+`boot.binfmt.emulatedSystems` or `boot.binfmt.registrations` on your host system.
 
-For more details about this have a look at :
+In your system `configuration.nix`:
+```nix
+{
+  # Enable binfmt emulation of aarch64-linux.
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+}
+```
+
+Alternatively, if you want to target other architectures:
+```nix
+# Define qemu-arm-static source.
+let qemu-arm-static = pkgs.stdenv.mkDerivation {
+  name = "qemu-arm-static";
+  src = builtins.fetchurl {
+    url = "https://github.com/multiarch/qemu-user-static/releases/download/v6.1.0-8/qemu-arm-static";
+    sha256 = "06344d77d4f08b3e1b26ff440cb115179c63ca8047afb978602d7922a51231e3";
+  };
+  dontUnpack = true;
+  installPhase = "install -D -m 0755 $src $out/bin/qemu-arm-static";
+};
+in {
+  # Enable binfmt emulation of extra binary formats (armv7l-linux, for exmaple).
+  boot.binfmt.registrations.arm = {
+    interpreter = "${qemu-arm-static}/bin/qemu-arm-static";
+    magicOrExtension = ''\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00'';
+    mask = ''\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\x00\xff\xfe\xff\xff\xff'';
+  };
+
+  # Define additional settings for nix.
+  nix.extraOptions = ''
+    extra-platforms = armv7l-linux
+  '';
+  nix.sandboxPaths = [ "/run/binfmt/arm=${qemu-arm-static}/bin/qemu-arm-static" ];
+}
+```
+
+For more details on configuring `binfmt`, have a look at:
+[binfmt options](https://search.nixos.org/options?channel=unstable&query=boot.binfmt),
+[binfmt.nix](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/system/boot/binfmt.nix),
+[this comment](https://github.com/NixOS/nixpkgs/issues/109661#issuecomment-762629438) and
 [clevers qemu-user](https://github.com/cleverca22/nixos-configs/blob/master/qemu.nix).
 
-Once you've run `nixos-rebuild` with theses options,
+Once you've run `nixos-rebuild` with these options,
 you can use the `--system` option to create images for other architectures.
 
 ## Using in a Flake
