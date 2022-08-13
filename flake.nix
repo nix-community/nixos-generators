@@ -21,17 +21,17 @@
     # example usage in flakes:
     #   outputs = { self, nixpkgs, nixos-generators, ...}: {
     #     vmware = nixos-generators.nixosGenerate {
-    #       pkgs = nixpkgs.legacyPackages.x86_64-linux;
+    #       system = "x86_64-linux";
     #       modules = [./configuration.nix];
     #       format = "vmware";
     #   };
     # }
-    nixosGenerate = { pkgs, format,  specialArgs ? { }, modules ? [ ] }:
+    nixosGenerate = { pkgs ? null, format,  system ? null, specialArgs ? { }, modules ? [ ] }:
     let 
       formatModule = builtins.getAttr format nixosModules;
       image = nixpkgs.lib.nixosSystem {
         inherit pkgs specialArgs;
-        system = pkgs.system;
+        system = if system != null then system else pkgs.system;
         modules = [
           formatModule
         ] ++ modules;
