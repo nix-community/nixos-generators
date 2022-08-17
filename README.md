@@ -170,7 +170,7 @@ An example `flake.nix` demonstrating this approach is below. `vmware` or
   outputs = { self, nixpkgs, nixos-generators, ... }: {
     packages.x86_64-linux = {
       vmware = nixos-generators.nixosGenerate {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        system = "x86_64-linux";
         modules = [
           # you can include your own nixos configuration here, i.e.
           # ./configuration.nix
@@ -178,7 +178,7 @@ An example `flake.nix` demonstrating this approach is below. `vmware` or
         format = "vmware";
       };
       vbox = nixos-generators.nixosGenerate {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        system = "x86_64-linux";
         format = "virtualbox";
       };
     };
