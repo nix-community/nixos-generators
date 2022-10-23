@@ -52,9 +52,20 @@
 
       packages = forAllSystems (system: let
         pkgs = nixpkgs.legacyPackages."${system}";
-      in {
-        nixos-generators = pkgs.stdenv.mkDerivation {
-          name = "nixos-generators";
+      in rec {
+        nixos-generators = nixpkgs.lib.warn ''
+
+          Deprecation note from: github:nix-community/nixos-generators
+
+          Was renamed:
+
+          Was: nixos-generatores.packages.${system}.nixos-generators
+          Now: nixos-generatores.packages.${system}.nixos-generate
+
+          Plase adapt your references
+        '' nixos-generate;
+        nixos-generate = pkgs.stdenv.mkDerivation {
+          name = "nixos-generate";
           src = ./.;
           meta.description = "Collection of image builders";
           nativeBuildInputs = with pkgs; [ makeWrapper ];
