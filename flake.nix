@@ -77,7 +77,7 @@
         };
       });
 
-      defaultPackage = forAllSystems (system: self.packages."${system}".nixos-generators);
+      defaultPackage = forAllSystems (system: self.packages."${system}".nixos-generate);
 
       devShell = forAllSystems (system: let
         pkgs = nixpkgs.legacyPackages."${system}";
@@ -89,7 +89,7 @@
       apps = forAllSystems (system: let
         nixos-generate = {
           type    = "app";
-          program = "${self.packages."${system}".nixos-generators}/bin/nixos-generate";
+          program = "${self.packages."${system}".nixos-generate}/bin/nixos-generate";
         };
       in {
         inherit nixos-generate;
