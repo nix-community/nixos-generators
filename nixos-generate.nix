@@ -29,7 +29,7 @@ in
     import "${toString nixpkgs}/nixos/lib/eval-config.nix" {
       inherit system;
       modules = [
-        module
+        (import ./format-module.nix)
         formatConfig
         configuration
       ];
