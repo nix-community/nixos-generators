@@ -8,7 +8,14 @@
 , flakeAttr ? null
 }:
 let
-  module = import ./format-module.nix;
+  module = rec {
+      # ensures that this module has the same key as
+      # the fromat-module that ships with 'nixos-generatores.nixosModules.*'.
+      # Thereby, it will be deduplicated by the module system.
+    _file = ./format-module.nix;
+    key = _file;
+    imports = [ ./format-module.nix];
+  };
 
   # Will only get evaluated when used, so no worries
   flake = builtins.getFlake flakeUri;
