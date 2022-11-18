@@ -10,7 +10,7 @@
 let
   module = rec {
       # ensures that this module has the same key as
-      # the format-module that ships with 'nixos-generatores.nixosModules.*'.
+      # the fromat-module that ships with 'nixos-generators.nixosModules.*'.
       # Thereby, it will be deduplicated by the module system.
     _file = ./format-module.nix;
     key = _file;
