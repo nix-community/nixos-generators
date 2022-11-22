@@ -6,9 +6,11 @@ generate outputs for different target formats.
 Just put your stuff into the configuration.nix and then call one of the image builders.
 
 for example:
+
 ```
 nixos-generate -f iso
 ```
+
 or
 
 ```
@@ -42,38 +44,39 @@ nix run github:nix-community/nixos-generators -- --help
 
 ## Supported formats
 
-format | description
---- | ---
-amazon | Amazon EC2 image
-azure | Microsoft azure image (Generation 1 / VHD)
-cloudstack | qcow2 image for cloudstack
-do | Digital Ocean image
-docker | Docker image (uses systemd to run, probably only works in podman)
-gce | Google Compute image
-hyperv | Hyper-V Image (Generation 2 / VHDX)
-install-iso | Installer ISO
-install-iso-hyperv | Installer ISO with enabled hyper-v support
-iso | ISO
-kexec | kexec tarball (extract to / and run /kexec_nixos)
-kexec-bundle | same as before, but it's just an executable
-kubevirt | KubeVirt image
-linode | Linode image
-lxc | create a tarball which is importable as an lxc container, use together with lxc-metadata
-lxc-metadata | the necessary metadata for the lxc image to start, usage: `lxc image import $(nixos-generate -f lxc-metadata) $(nixos-generate -f lxc)`
-openstack | qcow2 image for openstack
-proxmox | [VMA](https://pve.proxmox.com/wiki/VMA) file for proxmox
-proxmox-lxc | LXC template for proxmox
-qcow | qcow2 image
-raw | raw image with bios/mbr
-raw-efi | raw image with efi support
-sd-aarch64 | Like sd-aarch64-installer, but does not use default installer image config.
-sd-aarch64-installer | create an installer sd card for aarch64. For cross compiling use `--system aarch64-linux` and read the cross-compile section.
-vagrant-virtualbox | VirtualBox image for [Vagrant](https://www.vagrantup.com/)
-virtualbox | virtualbox VM
-vm | only used as a qemu-kvm runner
-vm-bootloader | same as vm, but uses a real bootloader instead of netbooting
-vm-nogui | same as vm, but without a GUI
-vmware | VMWare image (VMDK)
+| format               | description                                                                                                                             |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| amazon               | Amazon EC2 image                                                                                                                        |
+| azure                | Microsoft azure image (Generation 1 / VHD)                                                                                              |
+| cloudstack           | qcow2 image for cloudstack                                                                                                              |
+| do                   | Digital Ocean image                                                                                                                     |
+| docker               | Docker image (uses systemd to run, probably only works in podman)                                                                       |
+| gce                  | Google Compute image                                                                                                                    |
+| hyperv               | Hyper-V Image (Generation 2 / VHDX)                                                                                                     |
+| install-iso          | Installer ISO                                                                                                                           |
+| install-iso-hyperv   | Installer ISO with enabled hyper-v support                                                                                              |
+| iso                  | ISO                                                                                                                                     |
+| kexec                | kexec tarball (extract to / and run /kexec_nixos)                                                                                       |
+| kexec-bundle         | same as before, but it's just an executable                                                                                             |
+| kubevirt             | KubeVirt image                                                                                                                          |
+| linode               | Linode image                                                                                                                            |
+| lxc                  | create a tarball which is importable as an lxc container, use together with lxc-metadata                                                |
+| lxc-metadata         | the necessary metadata for the lxc image to start, usage: `lxc image import $(nixos-generate -f lxc-metadata) $(nixos-generate -f lxc)` |
+| openstack            | qcow2 image for openstack                                                                                                               |
+| proxmox              | [VMA](https://pve.proxmox.com/wiki/VMA) file for proxmox                                                                                |
+| proxmox-lxc          | LXC template for proxmox                                                                                                                |
+| qcow                 | qcow2 image                                                                                                                             |
+| qcow-efi             | qcow2 image with efi support                                                                                                            |
+| raw                  | raw image with bios/mbr                                                                                                                 |
+| raw-efi              | raw image with efi support                                                                                                              |
+| sd-aarch64           | Like sd-aarch64-installer, but does not use default installer image config.                                                             |
+| sd-aarch64-installer | create an installer sd card for aarch64. For cross compiling use `--system aarch64-linux` and read the cross-compile section.           |
+| vagrant-virtualbox   | VirtualBox image for [Vagrant](https://www.vagrantup.com/)                                                                              |
+| virtualbox           | virtualbox VM                                                                                                                           |
+| vm                   | only used as a qemu-kvm runner                                                                                                          |
+| vm-bootloader        | same as vm, but uses a real bootloader instead of netbooting                                                                            |
+| vm-nogui             | same as vm, but without a GUI                                                                                                           |
+| vmware               | VMWare image (VMDK)                                                                                                                     |
 
 ## Usage
 
@@ -84,6 +87,7 @@ Run `nixos-generate --help` for detailed usage information.
 adds ability to select a specific channel version.
 
 example:
+
 ```
 nix-shell --command './nixos-generate -f iso -I nixpkgs=channel:nixos-19.09'
 ```
@@ -103,6 +107,7 @@ To cross compile nixos images for other architectures you have to configure
 `boot.binfmt.emulatedSystems` or `boot.binfmt.registrations` on your host system.
 
 In your system `configuration.nix`:
+
 ```nix
 {
   # Enable binfmt emulation of aarch64-linux.
@@ -111,6 +116,7 @@ In your system `configuration.nix`:
 ```
 
 Alternatively, if you want to target other architectures:
+
 ```nix
 # Define qemu-arm-static source.
 let qemu-arm-static = pkgs.stdenv.mkDerivation {
@@ -152,7 +158,7 @@ you can use the `--system` option to create images for other architectures.
 `nixos-generators` can be included as a `Flake` input and provides
 a `nixos-generate` function for building images as `Flake` outputs. This
 approach pins all dependencies and allows for conveniently defining multiple
-output types based on one config. 
+output types based on one config.
 
 An example `flake.nix` demonstrating this approach is below. `vmware` or
 `virtualbox` images can be built from the same `configuration.nix` by running
