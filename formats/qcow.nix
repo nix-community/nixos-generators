@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, lib, pkgs, modulesPath, diskSize, ... }:
 {
   # for virtio kernel drivers
   imports = [
@@ -18,8 +18,7 @@
 
 
   system.build.qcow = import "${toString modulesPath}/../lib/make-disk-image.nix" {
-    inherit lib config pkgs;
-    diskSize = 16384;
+    inherit lib config pkgs diskSize;
     format = "qcow2";
   };
 
