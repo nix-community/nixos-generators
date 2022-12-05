@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, diskSize, ... }:
+{ config, lib, pkgs, modulesPath, diskSize ? 8192, ... }:
 {
   # for virtio kernel drivers
   imports = [
