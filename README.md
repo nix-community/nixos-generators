@@ -64,8 +64,8 @@ openstack | qcow2 image for openstack
 proxmox | [VMA](https://pve.proxmox.com/wiki/VMA) file for proxmox
 proxmox-lxc | LXC template for proxmox
 qcow | qcow2 image
-raw | raw image with bios/mbr
-raw-efi | raw image with efi support
+raw | raw image with bios/mbr. for physical hardware, see the 'raw and raw-efi' section
+raw-efi | raw image with efi support. for physical hardware, see the 'raw and raw-efi' section
 sd-aarch64 | Like sd-aarch64-installer, but does not use default installer image config.
 sd-aarch64-installer | create an installer sd card for aarch64. For cross compiling use `--system aarch64-linux` and read the cross-compile section.
 vagrant-virtualbox | VirtualBox image for [Vagrant](https://www.vagrantup.com/)
@@ -185,6 +185,16 @@ An example `flake.nix` demonstrating this approach is below. `vmware` or
   };
 }
 ```
+
+## Format-specific notes
+
+### `raw` and `raw-efi`
+
+`raw` and `raw-efi` images can be used on physical hardware, but benefit from some tweaks.
+* These images are configured to log to the serial console, and not to your display. One workaround for this is to add `boot.kernelParams = [ "console=tty0" ];` to your configuration, which will override the image's default `console=ttyS0`.
+* By default, grub will timeout after 1 second. To extend this, set `boot.loader.timeout = 5;` (or longer)
+* If boot fails for some reason, you will not get a recovery shell unless the root user is enabled, which you can do by setting a password for them (`users.users.root.password = "something";`, possibly `users.mutableUsers = true;` so you can interactively change the passwords after boot)
+* After booting, if you intend to use `nixos-switch`, consider using `nixos-generate-config`.
 
 ### License
 
