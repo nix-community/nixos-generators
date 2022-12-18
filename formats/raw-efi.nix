@@ -12,7 +12,7 @@ in {
   };
 
   fileSystems."/boot" = {
-    device = "/dev/vda1";
+    device = "/dev/disk/by-label/ESP";
     fsType = "vfat";
   };
 
