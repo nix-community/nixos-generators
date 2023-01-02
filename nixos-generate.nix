@@ -8,14 +8,7 @@
 , flakeAttr ? null
 }:
 let
-  module = rec {
-      # ensures that this module has the same key as
-      # the format-module that ships with 'nixos-generators.nixosModules.*'.
-      # Thereby, it will be deduplicated by the module system.
-    _file = ./format-module.nix;
-    key = _file;
-    imports = [ ./format-module.nix];
-  };
+  module = import ./format-module.nix;
 
   # Will only get evaluated when used, so no worries
   flake = builtins.getFlake flakeUri;
@@ -29,7 +22,7 @@ in
     import "${toString nixpkgs}/nixos/lib/eval-config.nix" {
       inherit system;
       modules = [
-        (import ./format-module.nix)
+        module
         formatConfig
         configuration
       ];
