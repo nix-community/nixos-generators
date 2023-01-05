@@ -21,7 +21,7 @@
 
   system.build.qcow = import "${toString modulesPath}/../lib/make-disk-image.nix" {
     inherit lib config pkgs;
-    diskSize = 2048;
+    diskSize = 8192;
     format = "qcow2";
     partitionTableType = "efi";
   };
