@@ -10,7 +10,7 @@
   outputs = { self, nixpkgs, nixlib }:
 
   # Library modules (depend on nixlib)
-  rec {
+  {
     # export all generator formats in ./formats
     nixosModules = nixlib.lib.mapAttrs' (file: _: {
       name = nixlib.lib.removeSuffix ".nix" file;
@@ -35,7 +35,7 @@
           imports = ( value.imports or [] ++ [ ./format-module.nix ] ); 
         } )
         ) customFormats;
-      formatModule = builtins.getAttr format (nixosModules // extraFormats);
+      formatModule = builtins.getAttr format (self.nixosModules // extraFormats);
       image = nixpkgs.lib.nixosSystem {
         inherit pkgs specialArgs;
         system = if system != null then system else pkgs.system;
