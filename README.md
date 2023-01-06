@@ -175,6 +175,8 @@ An example `flake.nix` demonstrating this approach is below. `vmware` or
           # you can include your own nixos configuration here, i.e.
           # ./configuration.nix
         ];
+        # you can also define your own custom formats
+        # customFormats = { <format name> = <format module>; ... }
         format = "vmware";
       };
       vbox = nixos-generators.nixosGenerate {
