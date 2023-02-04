@@ -162,8 +162,7 @@ Custom formats can be defined by building a format module (see the
 [formats](./formats) directory for examples) and passing it to `nixosGenerate`
 via an the `customFormats` argument. `customFormats` should be in the form of
 an attribute sets of the form `<format name> = <format module>` and can define
-multiple custom formats.  `nixosGenerate` will then match against the given
-`format` against these custom formats as well as the built in ones.
+multiple custom formats.  `nixosGenerate` will then match against these custom formats as well as the built in ones.
 
 ```nix
 {
