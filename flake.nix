@@ -48,7 +48,7 @@
   # Binary and Devshell outputs (depend on nixpkgs)
   (
     let
-       forAllSystems = nixpkgs.lib.genAttrs [ "x86_64-linux" "x86_64-darwin" "i686-linux" "aarch64-linux" ];
+       forAllSystems = nixpkgs.lib.genAttrs [ "x86_64-linux" "x86_64-darwin" "i686-linux" "aarch64-linux" "aarch64-darwin" ];
     in {
 
       packages = forAllSystems (system: let
