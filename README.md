@@ -158,6 +158,12 @@ An example `flake.nix` demonstrating this approach is below. `vmware` or
 `virtualbox` images can be built from the same `configuration.nix` by running
 `nix build .#vmware` or `nix build .#virtualbox`
 
+Custom formats can be defined by building a format module (see the
+[formats](./formats) directory for examples) and passing it to `nixosGenerate`
+via an the `customFormats` argument. `customFormats` should be in the form of
+an attribute sets of the form `<format name> = <format module>` and can define
+multiple custom formats.  `nixosGenerate` will then match against these custom formats as well as the built in ones.
+
 ```nix
 {
   inputs = {
@@ -176,6 +182,10 @@ An example `flake.nix` demonstrating this approach is below. `vmware` or
           # ./configuration.nix
         ];
         format = "vmware";
+        
+        # you can also define your own custom formats
+        # customFormats = { "myFormat" = <myFormatModule>; ... };
+        # format = "myFormat";
       };
       vbox = nixos-generators.nixosGenerate {
         system = "x86_64-linux";
