@@ -67,8 +67,8 @@
 
           Was renamed:
 
-          Was: nixos-generatores.packages.${system}.nixos-generators
-          Now: nixos-generatores.packages.${system}.nixos-generate
+          Was: nixos-generators.packages.${system}.nixos-generators
+          Now: nixos-generators.packages.${system}.nixos-generate
 
           Plase adapt your references
         '' nixos-generate;
