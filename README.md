@@ -183,6 +183,13 @@ multiple custom formats.  `nixosGenerate` will then match against these custom f
         ];
         format = "vmware";
         
+        # optional arguments:
+        # explicit nixpkgs and lib:
+        # pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        # lib = nixpkgs.legacyPackages.x86_64-linux.lib;
+        # additional arguements to pass to modules:
+        # specialArgs = { myExtraArg = "foobar"; };
+        
         # you can also define your own custom formats
         # customFormats = { "myFormat" = <myFormatModule>; ... };
         # format = "myFormat";
