@@ -9,7 +9,7 @@
   ];
 
   # for installer
-  isoImage.isoName = "nixos.iso";
+  isoImage.isoName = lib.mkForce "nixos.iso";
 
   # override installation-cd-base and enable wpa and sshd start at boot
   systemd.services.wpa_supplicant.wantedBy = lib.mkForce ["multi-user.target"];
