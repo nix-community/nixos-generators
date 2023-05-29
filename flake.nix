@@ -108,21 +108,18 @@
           };
         });
 
-        # legacy flake schema compat
-        defaultPackage =
-          forAllSystems (system: self.packages.${system}.default);
-
         checks = forAllSystems (system: {
           inherit (self.packages.${system})
             nixos-generate;
         });
 
-        devShell = forAllSystems (system: let
+        devShells = forAllSystems (system: let
           pkgs = nixpkgs.legacyPackages."${system}";
-        in
-          pkgs.mkShell {
+        in {
+          default = pkgs.mkShell {
             buildInputs = with pkgs; [jq coreutils findutils];
-          });
+          };
+        });
 
         # Make it runnable with `nix run`
         apps = forAllSystems (system: let
@@ -139,7 +136,12 @@
           default = nixos-generate;
         });
 
+
+        # legacy flake schema compat
         defaultApp = forAllSystems (system: self.apps."${system}".nixos-generate);
+        defaultPackage =
+          forAllSystems (system: self.packages.${system}.default);
+        devShell = forAllSystems (system: self.devShells.${system}.default);
       }
     );
 }
