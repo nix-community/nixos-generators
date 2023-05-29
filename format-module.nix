@@ -1,4 +1,4 @@
-{ lib, ... }: rec {
+{lib, ...}: rec {
   _file = ./format-module.nix;
   # This deliberate key makes sure this module will be deduplicated
   # regardless of the accessor path: either via flake's nixosModule
@@ -18,4 +18,3 @@
     };
   };
 }
-

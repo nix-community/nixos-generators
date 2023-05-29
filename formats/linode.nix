@@ -1,5 +1,10 @@
-{ config, lib, pkgs, modulesPath, ... }:
 {
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}: {
   imports = [
     "${toString modulesPath}/profiles/qemu-guest.nix"
   ];
@@ -23,7 +28,7 @@
     autoResize = true;
   };
 
-  swapDevices = [{ device = "/dev/sdb"; }];
+  swapDevices = [{device = "/dev/sdb";}];
 
   # Enable LISH and Linode booting w/ GRUB
   boot = {
@@ -38,7 +43,7 @@
     growPartition = true;
 
     # Set up LISH serial connection:
-    kernelParams = [ "console=ttyS0,19200n8" ];
+    kernelParams = ["console=ttyS0,19200n8"];
 
     loader = {
       # Increase timeout to allow LISH connection:

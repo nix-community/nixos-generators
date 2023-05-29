@@ -1,5 +1,4 @@
-{ modulesPath, ... }:
-{
+{modulesPath, ...}: {
   imports = [
     "${toString modulesPath}/virtualisation/vagrant-virtualbox-image.nix"
   ];
