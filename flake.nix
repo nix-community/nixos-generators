@@ -46,7 +46,7 @@
               name
               (value
                 // {
-                  imports = (value.imports or [] ++ [./format-module.nix]);
+                  imports = value.imports or [] ++ [./format-module.nix];
                 })
           )
           customFormats;
@@ -109,8 +109,13 @@
         });
 
         checks = forAllSystems (system: {
-          inherit (self.packages.${system})
-            nixos-generate;
+          inherit
+            (self.packages.${system})
+            nixos-generate
+            ;
+          is-formatted = import ./checks/is-formatted.nix {
+            pkgs = nixpkgs.legacyPackages.${system};
+          };
         });
 
         devShells = forAllSystems (system: let
@@ -135,7 +140,6 @@
           # gets run with `nix run . -- <args>`)
           default = nixos-generate;
         });
-
 
         # legacy flake schema compat
         defaultApp = forAllSystems (system: self.apps."${system}".nixos-generate);
