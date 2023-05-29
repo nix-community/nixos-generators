@@ -1,22 +1,21 @@
-{ nixpkgs ? <nixpkgs>
-, configuration ? <nixos-config>
-, system ? builtins.currentSystem
-
-, formatConfig
-
-, flakeUri ? null
-, flakeAttr ? null
-}:
-let
+{
+  nixpkgs ? <nixpkgs>,
+  configuration ? <nixos-config>,
+  system ? builtins.currentSystem,
+  formatConfig,
+  flakeUri ? null,
+  flakeAttr ? null,
+}: let
   module = import ./format-module.nix;
 
   # Will only get evaluated when used, so no worries
   flake = builtins.getFlake flakeUri;
   flakeSystem = flake.outputs.packages."${system}".nixosConfigurations."${flakeAttr}" or flake.outputs.nixosConfigurations."${flakeAttr}";
 in
-  if flakeUri != null then
+  if flakeUri != null
+  then
     flakeSystem.extendModules {
-      modules = [ module formatConfig ];
+      modules = [module formatConfig];
     }
   else
     import "${toString nixpkgs}/nixos/lib/eval-config.nix" {

@@ -1,5 +1,4 @@
-{ modulesPath, ... }:
-{
+{modulesPath, ...}: {
   imports = [
     "${toString modulesPath}/virtualisation/azure-image.nix"
   ];

@@ -1,5 +1,8 @@
-{ modulesPath, lib, ... }:
 {
+  modulesPath,
+  lib,
+  ...
+}: {
   imports = [
     "${toString modulesPath}/virtualisation/docker-image.nix"
   ];

@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-let
+{pkgs, ...}: let
   resize = pkgs.writeScriptBin "resize" ''
     if [ -e /dev/tty ]; then
       old=$(stty -g)
@@ -15,8 +14,8 @@ in {
     ./vm.nix
   ];
   virtualisation.graphics = false;
-  virtualisation.qemu.options = [ "-serial mon:stdio" ];
+  virtualisation.qemu.options = ["-serial mon:stdio"];
 
-  environment.systemPackages = [ resize ];
+  environment.systemPackages = [resize];
   environment.loginShellInit = "${resize}/bin/resize";
 }
