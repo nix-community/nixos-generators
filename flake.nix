@@ -81,6 +81,7 @@
         packages = forAllSystems (system: let
           pkgs = nixpkgs.legacyPackages."${system}";
         in rec {
+          default = nixos-generate;
           nixos-generators =
             nixpkgs.lib.warn ''
 
@@ -107,7 +108,14 @@
           };
         });
 
-        defaultPackage = forAllSystems (system: self.packages."${system}".nixos-generate);
+        # legacy flake schema compat
+        defaultPackage =
+          forAllSystems (system: self.packages.${system}.default);
+
+        checks = forAllSystems (system: {
+          inherit (self.packages.${system})
+            nixos-generate;
+        });
 
         devShell = forAllSystems (system: let
           pkgs = nixpkgs.legacyPackages."${system}";
