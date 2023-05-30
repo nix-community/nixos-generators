@@ -16,5 +16,5 @@ jobs:
     - uses: cachix/install-nix-action@v21
     - name: List flake structure
       run: nix flake show
-    - name: Run unit tests (flake)
-      run: nix build -L
+    - name: Run tests
+      run: nix flake check -L

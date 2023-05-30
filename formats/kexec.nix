@@ -1,11 +1,17 @@
-{ config, pkgs, lib, modulesPath, options, ... }: let
-
+{
+  config,
+  pkgs,
+  lib,
+  modulesPath,
+  options,
+  ...
+}: let
   clever-tests = builtins.fetchGit {
     url = "https://github.com/cleverca22/nix-tests";
     rev = "a9a316ad89bfd791df4953c1a8b4e8ed77995a18"; # master on 2021-06-13
   };
 
-  inherit (import ../lib.nix { inherit lib options; }) maybe;
+  inherit (import ../lib.nix {inherit lib options;}) maybe;
 in {
   imports = [
     "${toString modulesPath}/installer/netboot/netboot-minimal.nix"
@@ -17,7 +23,10 @@ in {
   system.build = rec {
     kexec_tarball = maybe.mkForce (pkgs.callPackage "${toString modulesPath}/../lib/make-system-tarball.nix" {
       storeContents = [
-        { object = config.system.build.kexec_script; symlink = "/kexec_nixos"; }
+        {
+          object = config.system.build.kexec_script;
+          symlink = "/kexec_nixos";
+        }
       ];
       contents = [];
     });
@@ -50,10 +59,11 @@ in {
 
   boot.loader.grub.enable = false;
   boot.kernelParams = [
-    "console=ttyS0,115200"          # allows certain forms of remote access, if the hardware is setup right
-    "panic=30" "boot.panic_on_fail" # reboot the machine upon fatal boot issues
+    "console=ttyS0,115200" # allows certain forms of remote access, if the hardware is setup right
+    "panic=30"
+    "boot.panic_on_fail" # reboot the machine upon fatal boot issues
   ];
-  systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
+  systemd.services.sshd.wantedBy = lib.mkForce ["multi-user.target"];
   networking.hostName = lib.mkDefault "kexec";
 
   formatAttr = "kexec_tarball";
