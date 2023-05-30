@@ -47,6 +47,36 @@
     in
       image.config.system.build.${image.config.formatAttr};
 
+    # example usage in flakes:
+    #   outputs = { self, nixpkgs, nixos-generators, ... }: {
+    #     server = nixos-generators.nixosGenerateMulti {
+    #       system = "x86_64-linux";
+    #       modules = [./configuration.nix];
+    #     } {
+    #       "vm" = {  modules = [./qemuConfig.nix] };
+    #       "vmware" = { modules = [./vmwareConfig.nix] };
+    #     };
+    #   }
+    #
+    # Builds multiple formats, based on common config. Takes a "default"
+    # attribute set of parameters which are the same as for `nixos-generate`
+    # and a second attribute set for each format.  The format specific
+    # attribute should have a name which matches a valid nixos-generators
+    # format, and have attributes which are merged with the provided defaults.
+    # Generally, the format overrides the default with the exception that
+    # modules are concatenated.  Each format is then available by name.  
+    #
+    # In the above example server.vm or server.vmware would build the qemu
+    # vm or vmware formats, respectively.
+    nixosGenerateMulti = baseArgs: formatArgs:
+    let
+      formats = nixpkgs.lib.attrNames formatArgs;
+      mkFinalArgs = format: (nixpkgs.lib.recursiveUpdate baseArgs formatArgs.${format}) // { format = format; modules = baseArgs.modules ++ (formatArgs.${format}.modules or [ ]); };
+      formatImage = format: (self.nixosGenerate (mkFinalArgs format));
+      mkFormatAttr = format: nixpkgs.lib.nameValuePair format (formatImage format);
+    in
+    builtins.listToAttrs (map mkFormatAttr formats);
+
   }
 
   //
