@@ -16,11 +16,6 @@
       type = lib.types.str;
       description = "Declare the default attribute to build";
     };
-    installIso.isoName = lib.mkOption {
-      type = lib.types.str;
-      default = "nixos.iso";
-      description = "iso name for image";
-    };
   };
 }
 
