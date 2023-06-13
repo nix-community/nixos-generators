@@ -108,15 +108,25 @@
           };
         });
 
-        checks = forAllSystems (system: {
-          inherit
-            (self.packages.${system})
-            nixos-generate
-            ;
-          is-formatted = import ./checks/is-formatted.nix {
-            pkgs = nixpkgs.legacyPackages.${system};
-          };
-        });
+        checks =
+          nixpkgs.lib.genAttrs ["x86_64-linux" "aarch64-linux"]
+          (
+            system: let
+              allFormats = import ./checks/test-all-formats.nix {
+                inherit nixpkgs system;
+              };
+            in
+              {
+                inherit
+                  (self.packages.${system})
+                  nixos-generate
+                  ;
+                is-formatted = import ./checks/is-formatted.nix {
+                  pkgs = nixpkgs.legacyPackages.${system};
+                };
+              }
+              // allFormats
+          );
 
         devShells = forAllSystems (system: let
           pkgs = nixpkgs.legacyPackages."${system}";
