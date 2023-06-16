@@ -1,0 +1,17 @@
+queue_rules:
+  - name: default
+    merge_conditions:
+      - check-success=build (macos-latest)
+      - check-success=build (ubuntu-latest)
+defaults:
+  actions:
+    queue:
+      allow_merging_configuration_change: true
+      method: rebase
+pull_request_rules:
+  - name: merge using the merge queue
+    conditions:
+      - base=master
+      - label~=merge-queue|dependencies
+    actions:
+      queue: {}

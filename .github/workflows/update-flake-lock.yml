@@ -17,9 +17,5 @@ jobs:
       - name: Update flake.lock
         uses: DeterminateSystems/update-flake-lock@v19
         with:
-          pr-body: |
-            Automated changes by the update-flake-lock
-            ```
-            {{ env.GIT_COMMIT_MESSAGE }}
-            ```
-            bors merge
+          pr-labels: |
+            merge-queue
