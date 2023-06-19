@@ -150,12 +150,6 @@
           # gets run with `nix run . -- <args>`)
           default = nixos-generate;
         });
-
-        # legacy flake schema compat
-        defaultApp = forAllSystems (system: self.apps."${system}".nixos-generate);
-        defaultPackage =
-          forAllSystems (system: self.packages.${system}.default);
-        devShell = forAllSystems (system: self.devShells.${system}.default);
       }
     );
 }
