@@ -1,8 +1,13 @@
 {
+  config,
   lib,
   extendModules,
   ...
 }: let
+  inherit
+    (lib)
+    types
+    ;
   # attrs of all format modules from ./formats
   formatModules =
     lib.flip lib.mapAttrs' (builtins.readDir ./formats)
@@ -21,7 +26,7 @@
     };
 
   # evaluated configs for all formats
-  allConfigs = lib.mapAttrs (formatName: evalFormat) formatModules;
+  allConfigs = lib.mapAttrs (formatName: evalFormat) config.formatConfigs;
 
   # attrset of formats to be exposed under config.system.formats
   formats = lib.flip lib.mapAttrs allConfigs (
@@ -37,13 +42,22 @@ in {
   key = "github:nix-community/nixos-generators/all-formats.nix";
 
   # declare option for exposing all formats
-  options.system.formats = lib.mkOption {
+  options.formats = lib.mkOption {
     type = lib.types.lazyAttrsOf lib.types.raw;
     description = ''
       Different target formats generated for this NixOS configuratation.
     '';
   };
 
+  options.formatConfigs = lib.mkOption {
+    type = types.attrsOf types.deferredModule;
+  };
+
   # expose all formats
-  config.system = {inherit formats;};
+  config.formats = formats;
+
+  #
+  config.formatConfigs = lib.flip lib.mapAttrs formatModules (name: module: {
+    imports = [module];
+  });
 }

@@ -28,6 +28,6 @@
   testedFormats =
     lib.filterAttrs
     (name: _: ! exclude ? ${name})
-    conf.config.system.formats;
+    conf.config.formats;
 in
   testedFormats

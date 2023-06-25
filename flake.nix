@@ -11,8 +11,23 @@
     self,
     nixpkgs,
     nixlib,
-  }:
-  # Library modules (depend on nixlib)
+  }: let
+    lib = nixpkgs.lib;
+
+    # Ensures a derivation's name can be accessed without evaluating it deeply.
+    # Prevents `nix flake show` from being very slow.
+    makeLazyDrv = name: drv: {
+      inherit name;
+      inherit
+        (drv)
+        drvPath
+        outPath
+        outputName
+        ;
+      type = "derivation";
+    };
+  in
+    # Library modules (depend on nixlib)
     {
       # export all generator formats in ./formats
       nixosModules = nixlib.lib.mapAttrs' (file: _: {
@@ -109,23 +124,31 @@
         });
 
         checks =
-          nixpkgs.lib.genAttrs ["x86_64-linux" "aarch64-linux"]
+          lib.genAttrs ["x86_64-linux" "aarch64-linux"]
           (
             system: let
               allFormats = import ./checks/test-all-formats.nix {
                 inherit nixpkgs system;
               };
+              test-customize-format = import ./checks/test-customize-format.nix {
+                inherit nixpkgs system;
+              };
             in
-              {
-                inherit
-                  (self.packages.${system})
-                  nixos-generate
-                  ;
-                is-formatted = import ./checks/is-formatted.nix {
-                  pkgs = nixpkgs.legacyPackages.${system};
-                };
-              }
-              // allFormats
+              lib.mapAttrs makeLazyDrv (
+                {
+                  inherit
+                    (self.packages.${system})
+                    nixos-generate
+                    ;
+
+                  inherit test-customize-format;
+
+                  is-formatted = import ./checks/is-formatted.nix {
+                    pkgs = nixpkgs.legacyPackages.${system};
+                  };
+                }
+                // allFormats
+              )
           );
 
         devShells = forAllSystems (system: let
