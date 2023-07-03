@@ -147,6 +147,65 @@ For more details on configuring `binfmt`, have a look at:
 Once you've run `nixos-rebuild` with these options,
 you can use the `--system` option to create images for other architectures.
 
+## Using as a nixos-module
+
+`nixos-generators` can be included as a `NixOS module` into your existing `configuration.nix` making all available formats available through `config.formats` and configurable through `config.formatConfigs`. New formats can be defined by adding a new entry like `config.formatConfigs.my-new-format = {config, ...}: {}`.
+
+An example `flake.nix` demonstrating this approach is below.
+
+images can be built from the same `configuration.nix` by running:
+
+- `nix build .#vmware` or
+- `nix build .#my-custom-format` or
+- `nix build .#<any-other-format>`
+
+```nix
+{
+  inputs = {
+    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixos-generators = {
+      url = "github:nix-community/nixos-generators";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+  outputs = { self, nixpkgs, nixos-generators, ... }: {
+
+    # A single nixos config outputting multiple formats.
+    # Alternatively put this in a configuration.nix.
+    nixosModules.my-machine = {config, ...}: {
+      imports = [
+        nixos-generators.nixosModules.all-formats
+      ];
+
+      nixpkgs.hostPlatform = "x86_64-linux";
+
+      # customize an existing format
+      formatConfigs.vmware = {config, ...}: {
+        services.openssh.enable = true;
+      };
+
+      # define a new format
+      formatConfigs.my-custom-format = {config, modulesPath, ...}: {
+        imports = ["${toString modulesPath}/installer/cd-dvd/installation-cd-base.nix"];
+        formatAttr = "isoImage";
+        filename = "*.iso";
+        networking.wireless.networks = {
+          # ...
+        };
+      };
+
+    # the evaluated machine
+    nixosConfigurations.my-machine = nixpkgs.lib.nixosSystem {
+      modules = [self.nixosModules.my-machine];
+    };
+
+    # optionally re-expose all formats as packages
+    packages.x86_64-linux =
+      self.nixosConfigurations.my-machine.config.formats;
+  };
+}
+```
+
 ## Using in a Flake
 
 `nixos-generators` can be included as a `Flake` input and provides
