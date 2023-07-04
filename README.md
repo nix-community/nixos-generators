@@ -153,11 +153,11 @@ you can use the `--system` option to create images for other architectures.
 
 An example `flake.nix` demonstrating this approach is below.
 
-images can be built from the same `configuration.nix` by running:
+images can be built from that flake by running:
 
-- `nix build .#vmware` or
-- `nix build .#my-custom-format` or
-- `nix build .#<any-other-format>`
+- `nix build .#nixosConfigurations.my-machine.config.formats.vmware` or
+- `nix build .#nixosConfigurations.my-machine.config.formats.my-custom-format` or
+- `nix build .#nixosConfigurations.my-machine.config.formats.<any-other-format>`
 
 ```nix
 {
@@ -198,10 +198,6 @@ images can be built from the same `configuration.nix` by running:
     nixosConfigurations.my-machine = nixpkgs.lib.nixosSystem {
       modules = [self.nixosModules.my-machine];
     };
-
-    # optionally re-expose all formats as packages
-    packages.x86_64-linux =
-      self.nixosConfigurations.my-machine.config.formats;
   };
 }
 ```
