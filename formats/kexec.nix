@@ -3,33 +3,28 @@
   pkgs,
   lib,
   modulesPath,
-  options,
   ...
-}: let
-  clever-tests = builtins.fetchGit {
-    url = "https://github.com/cleverca22/nix-tests";
-    rev = "a9a316ad89bfd791df4953c1a8b4e8ed77995a18"; # master on 2021-06-13
-  };
+}: {
 
-  inherit (import ../lib.nix {inherit lib options;}) maybe;
-in {
   imports = [
-    "${toString modulesPath}/installer/netboot/netboot-minimal.nix"
-    "${clever-tests}/kexec/autoreboot.nix"
-    "${clever-tests}/kexec/kexec.nix"
-    "${clever-tests}/kexec/justdoit.nix"
+    (modulesPath + "/installer/netboot/netboot-minimal.nix")
   ];
 
   system.build = rec {
-    kexec_tarball = maybe.mkForce (pkgs.callPackage "${toString modulesPath}/../lib/make-system-tarball.nix" {
+    kexec_tarball = pkgs.callPackage "${toString modulesPath}/../lib/make-system-tarball.nix" {
       storeContents = [
         {
-          object = config.system.build.kexec_script;
+          object = pkgs.writeScript "kexec" ''
+            kexec \
+              --load ${config.system.build.toplevel}/kernel \
+              --initrd ${config.system.build.toplevel}/initrd \
+              --command-line "$(</proc/cmdline)"
+          '';
           symlink = "/kexec_nixos";
         }
       ];
       contents = [];
-    });
+    };
 
     kexec_tarball_self_extract_script = pkgs.writeTextFile {
       executable = true;
