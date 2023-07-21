@@ -11,5 +11,5 @@
   services.journald.console = "/dev/console";
 
   formatAttr = "tarball";
-  filename = "*.tar.xz";
+  filename = ".tar.xz";
 }

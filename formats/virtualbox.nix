@@ -4,5 +4,5 @@
   ];
 
   formatAttr = "virtualBoxOVA";
-  filename = "*.ova";
+  filename = ".ova";
 }

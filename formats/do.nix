@@ -4,4 +4,5 @@
   ];
 
   formatAttr = "digitalOceanImage";
+  filename = ".qcow2.gz";
 }

@@ -4,5 +4,5 @@
   ];
 
   formatAttr = "hypervImage";
-  filename = "*.vhdx";
+  filename = ".vhdx";
 }

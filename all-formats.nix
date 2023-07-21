@@ -31,9 +31,9 @@
 
   # attrset of formats to be exposed under config.system.formats
   formats = lib.flip lib.mapAttrs allConfigs (
-    formatName: conf: pkgs.runCommand formatName {} ''
+    formatName: conf: pkgs.runCommand "${conf.config.system.build.${conf.config.formatAttr}.name}${conf.config.filename}" {} ''
       set -efu
-      target=$(find '${conf.config.system.build.${conf.config.formatAttr}}' -wholename '${conf.config.filename}' -xtype f -print -quit)
+      target=$(find '${conf.config.system.build.${conf.config.formatAttr}}' -name '*${conf.config.filename}' -xtype f -print -quit)
       ln -s "$target" "$out"
     ''
   );

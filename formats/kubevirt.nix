@@ -4,4 +4,5 @@
   ];
 
   formatAttr = "kubevirtImage";
+  filename = ".qcow2";
 }

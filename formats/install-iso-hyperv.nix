@@ -13,5 +13,5 @@
   virtualisation.hypervGuest.enable = true;
 
   formatAttr = "isoImage";
-  filename = "*.iso";
+  filename = ".iso";
 }

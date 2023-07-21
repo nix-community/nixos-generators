@@ -35,4 +35,5 @@
   };
 
   formatAttr = "qcow";
+  filename = ".qcow2";
 }

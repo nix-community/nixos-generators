@@ -10,5 +10,5 @@
   ];
 
   formatAttr = "tarball";
-  filename = "*/tarball/*.tar.xz";
+  filename = ".tar.xz";
 }

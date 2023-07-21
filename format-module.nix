@@ -10,7 +10,7 @@
     filename = lib.mkOption {
       type = lib.types.str;
       description = "Declare the path of the wanted file in the output directory";
-      default = "*";
+      default = "";
     };
     formatAttr = lib.mkOption {
       type = lib.types.str;
