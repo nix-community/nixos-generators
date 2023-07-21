@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   extendModules,
   ...
 }: let
@@ -30,8 +31,11 @@
 
   # attrset of formats to be exposed under config.system.formats
   formats = lib.flip lib.mapAttrs allConfigs (
-    formatName: conf:
-      conf.config.system.build.${conf.config.formatAttr}
+    formatName: conf: pkgs.runCommand formatName {} ''
+      set -efu
+      target=$(find '${conf.config.system.build.${conf.config.formatAttr}}' -wholename '${conf.config.filename}' -xtype f -print -quit)
+      ln -s "$target" "$out"
+    ''
   );
 in {
   _file = ./all-formats.nix;
