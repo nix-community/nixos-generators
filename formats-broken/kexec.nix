@@ -67,5 +67,5 @@ in {
   networking.hostName = lib.mkDefault "kexec";
 
   formatAttr = "kexec_tarball";
-  filename = "*/tarball/*.tar.xz";
+  fileExtension = "*/tarball/*.tar.xz";
 }

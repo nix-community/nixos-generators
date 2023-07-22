@@ -35,4 +35,5 @@
   };
 
   formatAttr = "qcow";
+  fileExtension = ".qcow2";
 }

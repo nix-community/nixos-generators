@@ -163,13 +163,13 @@ if [[ -n $cores ]]; then
 fi
 
 formatAttr=$(nix-instantiate "${nix_args[@]}" --eval --json -A config.formatAttr | jq -r .)
-filename=$(nix-instantiate "${nix_args[@]}" --eval --json -A config.filename | jq -r .)
+fileExtension=$(nix-instantiate "${nix_args[@]}" --eval --json -A config.fileExtension | jq -r .)
 
 out=$(nix-build "${nix_args[@]}" "${nix_build_args[@]}" -A "config.system.build.$formatAttr")
 
 if [[ -z $run ]]; then
   # show the first file, ignoring nix-support
-  find "$out" -wholename "$filename" -xtype f -print -quit
+  find "$out" -name "*$fileExtension" -xtype f -print -quit
 else
   runner=$(find "$out"/bin -type l -print -quit)
   exec "$runner"

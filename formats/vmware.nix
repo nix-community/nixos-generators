@@ -4,4 +4,5 @@
   ];
 
   formatAttr = "vmwareImage";
+  fileExtension = ".vmdk";
 }

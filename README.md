@@ -188,7 +188,7 @@ images can be built from that flake by running:
       formatConfigs.my-custom-format = {config, modulesPath, ...}: {
         imports = ["${toString modulesPath}/installer/cd-dvd/installation-cd-base.nix"];
         formatAttr = "isoImage";
-        filename = "*.iso";
+        fileExtension = ".iso";
         networking.wireless.networks = {
           # ...
         };
