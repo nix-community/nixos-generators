@@ -4,5 +4,5 @@
   ];
 
   formatAttr = "amazonImage";
-  filename = ".vhd";
+  fileExtension = ".vhd";
 }

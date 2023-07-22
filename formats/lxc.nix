@@ -10,5 +10,5 @@
   ];
 
   formatAttr = "tarball";
-  filename = ".tar.xz";
+  fileExtension = ".tar.xz";
 }

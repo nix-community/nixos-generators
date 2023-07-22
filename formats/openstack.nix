@@ -16,5 +16,5 @@ else {
     "${toString modulesPath}/../maintainers/scripts/openstack/openstack-image.nix"
   ];
   formatAttr = "openstackImage";
-  filename = ".qcow2";
+  fileExtension = ".qcow2";
 }

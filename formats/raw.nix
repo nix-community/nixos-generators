@@ -26,5 +26,5 @@
   };
 
   formatAttr = "raw";
-  filename = ".img";
+  fileExtension = ".img";
 }

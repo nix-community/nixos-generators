@@ -13,5 +13,5 @@
   systemd.services.sshd.wantedBy = lib.mkForce ["multi-user.target"];
 
   formatAttr = "isoImage";
-  filename = ".iso";
+  fileExtension = ".iso";
 }

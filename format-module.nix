@@ -7,7 +7,7 @@
   key = "github:nix-community/nixos-generators/format-module.nix";
 
   options = {
-    filename = lib.mkOption {
+    fileExtension = lib.mkOption {
       type = lib.types.str;
       description = "Declare the path of the wanted file in the output directory";
       default = "";

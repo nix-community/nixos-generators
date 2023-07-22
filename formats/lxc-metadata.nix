@@ -9,5 +9,5 @@
   ];
 
   formatAttr = "metadata";
-  filename = ".tar.xz";
+  fileExtension = ".tar.xz";
 }

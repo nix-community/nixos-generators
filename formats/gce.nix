@@ -4,5 +4,5 @@
   ];
 
   formatAttr = "googleComputeImage";
-  filename = ".raw.tar.gz";
+  fileExtension = ".raw.tar.gz";
 }

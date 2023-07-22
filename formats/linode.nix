@@ -10,7 +10,7 @@
   ];
 
   formatAttr = "linode";
-  filename = ".img.gz";
+  fileExtension = ".img.gz";
 
   system.build.linode = import "${toString modulesPath}/../lib/make-disk-image.nix" {
     inherit lib config pkgs;

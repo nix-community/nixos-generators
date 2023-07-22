@@ -37,7 +37,7 @@ Tests using the all-formats module through a flake.
       }: {
         imports = ["${toString modulesPath}/installer/cd-dvd/installation-cd-base.nix"];
         formatAttr = "isoImage";
-        filename = "*.iso";
+        fileExtension = ".iso";
         networking.wireless.networks = {
           # ...
         };

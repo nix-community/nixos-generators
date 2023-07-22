@@ -35,5 +35,5 @@
   };
 
   formatAttr = "qcow";
-  filename = ".qcow2";
+  fileExtension = ".qcow2";
 }
