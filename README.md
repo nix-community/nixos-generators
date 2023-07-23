@@ -5,7 +5,7 @@ generate outputs for different target formats.
 
 Just put your stuff into the configuration.nix and then call one of the image builders.
 
-for example:
+For example:
 ```
 nixos-generate -f iso
 ```
@@ -81,9 +81,9 @@ Run `nixos-generate --help` for detailed usage information.
 
 ## select a specific nixpkgs channel
 
-adds ability to select a specific channel version.
+Adds ability to select a specific channel version.
 
-example:
+Example:
 ```
 nix-shell --command './nixos-generate -f iso -I nixpkgs=channel:nixos-19.09'
 ```
@@ -153,7 +153,7 @@ you can use the `--system` option to create images for other architectures.
 
 An example `flake.nix` demonstrating this approach is below.
 
-images can be built from that flake by running:
+Images can be built from that flake by running:
 
 - `nix build .#nixosConfigurations.my-machine.config.formats.vmware` or
 - `nix build .#nixosConfigurations.my-machine.config.formats.my-custom-format` or
@@ -242,7 +242,7 @@ multiple custom formats.  `nixosGenerate` will then match against these custom f
         # explicit nixpkgs and lib:
         # pkgs = nixpkgs.legacyPackages.x86_64-linux;
         # lib = nixpkgs.legacyPackages.x86_64-linux.lib;
-        # additional arguements to pass to modules:
+        # additional arguments to pass to modules:
         # specialArgs = { myExtraArg = "foobar"; };
         
         # you can also define your own custom formats
@@ -276,4 +276,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 #### No space left on device
 
-this means either /tmp, /run/user/$UID or your TMPFS runs full. sometimes setting TMPDIR to some other location can help, sometimes /tmp needs to be on a bigger partition (not a tmpfs).
+This means either /tmp, /run/user/$UID or your TMPFS runs full. Sometimes setting TMPDIR to some other location can help, sometimes /tmp needs to be on a bigger partition (not a tmpfs).
