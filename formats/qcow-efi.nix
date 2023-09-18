@@ -43,14 +43,15 @@
     boot.loader.grub.efiInstallAsRemovable = true;
     boot.loader.timeout = 0;
 
-    system.build.qcow = import "${toString modulesPath}/../lib/make-disk-image.nix" {
+    system.build.qcow-efi = import "${toString modulesPath}/../lib/make-disk-image.nix" {
       inherit lib config pkgs;
       diskSize = config.boot.diskSize;
       format = "qcow2";
       partitionTableType = "efi";
     };
 
-    formatAttr = "qcow";
+    formatAttr = "qcow-efi";
+    fileExtension = ".qcow2";
   };
 }
 
