@@ -6,7 +6,7 @@
   ];
 
   options = {
-    diskSize = lib.mkOption {
+    boot.diskSize = lib.mkOption {
       default = "auto";
       description = "The disk size in megabytes of the system disk image.";
       type = with lib.types; oneOf [ ints.positive (enum [ "auto" ])];
@@ -35,7 +35,7 @@
 
     system.build.qcow = import "${toString modulesPath}/../lib/make-disk-image.nix" {
       inherit lib config pkgs;
-      diskSize = config.diskSize;
+      diskSize = config.boot.diskSize;
       format = "qcow2";
       partitionTableType = "efi";
     };
