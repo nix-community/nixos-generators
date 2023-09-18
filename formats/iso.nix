@@ -1,5 +1,8 @@
-{ config, modulesPath, ... }:
 {
+  config,
+  modulesPath,
+  ...
+}: {
   imports = [
     "${toString modulesPath}/installer/cd-dvd/iso-image.nix"
   ];
@@ -11,5 +14,5 @@
   isoImage.makeUsbBootable = true;
 
   formatAttr = "isoImage";
-  filename = "*.iso";
+  fileExtension = ".iso";
 }

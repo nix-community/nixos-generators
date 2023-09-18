@@ -1,0 +1,45 @@
+queue_rules:
+  - name: default
+    merge_conditions:
+      - check-success=Evaluate flake.nix
+      - check-success=check amazon [x86_64-linux]
+      - check-success=check azure [x86_64-linux]
+      - check-success=check do [x86_64-linux]
+      - check-success=check docker [x86_64-linux]
+      - check-success=check gce [x86_64-linux]
+      - check-success=check hyperv [x86_64-linux]
+      - check-success=check install-iso [x86_64-linux]
+      - check-success=check install-iso-hyperv [x86_64-linux]
+      - check-success=check is-formatted [x86_64-linux]
+      - check-success=check iso [x86_64-linux]
+      - check-success=check kubevirt [x86_64-linux]
+      - check-success=check linode [x86_64-linux]
+      - check-success=check lxc [x86_64-linux]
+      - check-success=check lxc-metadata [x86_64-linux]
+      - check-success=check nixos-generate [x86_64-linux]
+      - check-success=check openstack [x86_64-linux]
+      - check-success=check proxmox [x86_64-linux]
+      - check-success=check raw [x86_64-linux]
+      - check-success=check raw-efi [x86_64-linux]
+      - check-success=check vagrant-virtualbox [x86_64-linux]
+      - check-success=check virtualbox [x86_64-linux]
+      - check-success=check vm [x86_64-linux]
+      - check-success=check vm-nogui [x86_64-linux]
+      - check-success=package default [aarch64-darwin]
+      - check-success=package default [x86_64-linux]
+      - check-success=package nixos-generate [aarch64-darwin]
+      - check-success=package nixos-generate [x86_64-linux]
+      - check-success=package nixos-generators [aarch64-darwin]
+      - check-success=package nixos-generators [x86_64-linux]
+defaults:
+  actions:
+    queue:
+      allow_merging_configuration_change: true
+      method: rebase
+pull_request_rules:
+  - name: merge using the merge queue
+    conditions:
+      - base=master
+      - label~=merge-queue|dependencies
+    actions:
+      queue: {}

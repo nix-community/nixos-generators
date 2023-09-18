@@ -1,5 +1,8 @@
-{ modulesPath, lib, ... }:
 {
+  modulesPath,
+  lib,
+  ...
+}: {
   imports = [
     "${toString modulesPath}/virtualisation/docker-image.nix"
   ];
@@ -8,5 +11,5 @@
   services.journald.console = "/dev/console";
 
   formatAttr = "tarball";
-  filename = "*.tar.xz";
+  fileExtension = ".tar.xz";
 }

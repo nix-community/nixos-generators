@@ -1,4 +1,4 @@
-{ lib, ... }: rec {
+{lib, ...}: rec {
   _file = ./format-module.nix;
   # This deliberate key makes sure this module will be deduplicated
   # regardless of the accessor path: either via flake's nixosModule
@@ -7,10 +7,10 @@
   key = "github:nix-community/nixos-generators/format-module.nix";
 
   options = {
-    filename = lib.mkOption {
+    fileExtension = lib.mkOption {
       type = lib.types.str;
       description = "Declare the path of the wanted file in the output directory";
-      default = "*";
+      default = "";
     };
     formatAttr = lib.mkOption {
       type = lib.types.str;
@@ -18,4 +18,3 @@
     };
   };
 }
-

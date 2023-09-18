@@ -1,9 +1,14 @@
-{ config, lib, options, pkgs, modulesPath, ... }:
-
-let
-  inherit (import ../lib.nix { inherit lib options; }) maybe;
+{
+  config,
+  lib,
+  options,
+  pkgs,
+  modulesPath,
+  ...
+}: let
+  inherit (import ../lib.nix {inherit lib options;}) maybe;
 in {
-  imports = [ ./raw.nix ];
+  imports = [./raw.nix];
 
   boot.loader.grub = {
     device = "nodev";

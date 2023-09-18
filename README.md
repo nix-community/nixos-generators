@@ -5,8 +5,7 @@ generate outputs for different target formats.
 
 Just put your stuff into the configuration.nix and then call one of the image builders.
 
-for example:
-
+For example:
 ```
 nixos-generate -f iso
 ```
@@ -84,10 +83,9 @@ Run `nixos-generate --help` for detailed usage information.
 
 ## select a specific nixpkgs channel
 
-adds ability to select a specific channel version.
+Adds ability to select a specific channel version.
 
-example:
-
+Example:
 ```
 nix-shell --command './nixos-generate -f iso -I nixpkgs=channel:nixos-19.09'
 ```
@@ -153,6 +151,61 @@ For more details on configuring `binfmt`, have a look at:
 Once you've run `nixos-rebuild` with these options,
 you can use the `--system` option to create images for other architectures.
 
+## Using as a nixos-module
+
+`nixos-generators` can be included as a `NixOS module` into your existing `configuration.nix` making all available formats available through `config.formats` and configurable through `config.formatConfigs`. New formats can be defined by adding a new entry like `config.formatConfigs.my-new-format = {config, ...}: {}`.
+
+An example `flake.nix` demonstrating this approach is below.
+
+Images can be built from that flake by running:
+
+- `nix build .#nixosConfigurations.my-machine.config.formats.vmware` or
+- `nix build .#nixosConfigurations.my-machine.config.formats.my-custom-format` or
+- `nix build .#nixosConfigurations.my-machine.config.formats.<any-other-format>`
+
+```nix
+{
+  inputs = {
+    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixos-generators = {
+      url = "github:nix-community/nixos-generators";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+  outputs = { self, nixpkgs, nixos-generators, ... }: {
+
+    # A single nixos config outputting multiple formats.
+    # Alternatively put this in a configuration.nix.
+    nixosModules.my-machine = {config, ...}: {
+      imports = [
+        nixos-generators.nixosModules.all-formats
+      ];
+
+      nixpkgs.hostPlatform = "x86_64-linux";
+
+      # customize an existing format
+      formatConfigs.vmware = {config, ...}: {
+        services.openssh.enable = true;
+      };
+
+      # define a new format
+      formatConfigs.my-custom-format = {config, modulesPath, ...}: {
+        imports = ["${toString modulesPath}/installer/cd-dvd/installation-cd-base.nix"];
+        formatAttr = "isoImage";
+        fileExtension = ".iso";
+        networking.wireless.networks = {
+          # ...
+        };
+      };
+
+    # the evaluated machine
+    nixosConfigurations.my-machine = nixpkgs.lib.nixosSystem {
+      modules = [self.nixosModules.my-machine];
+    };
+  };
+}
+```
+
 ## Using in a Flake
 
 `nixos-generators` can be included as a `Flake` input and provides
@@ -163,6 +216,12 @@ output types based on one config.
 An example `flake.nix` demonstrating this approach is below. `vmware` or
 `virtualbox` images can be built from the same `configuration.nix` by running
 `nix build .#vmware` or `nix build .#virtualbox`
+
+Custom formats can be defined by building a format module (see the
+[formats](./formats) directory for examples) and passing it to `nixosGenerate`
+via an the `customFormats` argument. `customFormats` should be in the form of
+an attribute sets of the form `<format name> = <format module>` and can define
+multiple custom formats.  `nixosGenerate` will then match against these custom formats as well as the built in ones.
 
 ```nix
 {
@@ -182,6 +241,17 @@ An example `flake.nix` demonstrating this approach is below. `vmware` or
           # ./configuration.nix
         ];
         format = "vmware";
+        
+        # optional arguments:
+        # explicit nixpkgs and lib:
+        # pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        # lib = nixpkgs.legacyPackages.x86_64-linux.lib;
+        # additional arguments to pass to modules:
+        # specialArgs = { myExtraArg = "foobar"; };
+        
+        # you can also define your own custom formats
+        # customFormats = { "myFormat" = <myFormatModule>; ... };
+        # format = "myFormat";
       };
       vbox = nixos-generators.nixosGenerate {
         system = "x86_64-linux";
@@ -210,4 +280,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 #### No space left on device
 
-this means either /tmp, /run/user/$UID or your TMPFS runs full. sometimes setting TMPDIR to some other location can help, sometimes /tmp needs to be on a bigger partition (not a tmpfs).
+This means either /tmp, /run/user/$UID or your TMPFS runs full. Sometimes setting TMPDIR to some other location can help, sometimes /tmp needs to be on a bigger partition (not a tmpfs).
