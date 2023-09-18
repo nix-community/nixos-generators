@@ -6,10 +6,20 @@
   ];
 
   options = {
-    boot.diskSize = lib.mkOption {
-      default = "auto";
-      description = "The disk size in megabytes of the system disk image.";
-      type = with lib.types; oneOf [ ints.positive (enum [ "auto" ])];
+    boot = {
+      consoles = lib.mkOption {
+        default = [ "ttyS0" ] ++
+                  (lib.optional (pkgs.stdenv.hostPlatform.isAarch) "ttyAMA0,115200") ++
+                  (lib.optional (pkgs.stdenv.hostPlatform.isRiscV64) "ttySIF0,115200");
+        description = "Kernel console boot flags to pass to boot.kernelParams";
+        example = [ "ttyS2,115200" ];
+      };
+
+      diskSize = lib.mkOption {
+        default = "auto";
+        description = "The disk size in megabytes of the system disk image.";
+        type = with lib.types; oneOf [ ints.positive (enum [ "auto" ])];
+      };
     };
   };
 
@@ -26,7 +36,7 @@
     };
 
     boot.growPartition = true;
-    boot.kernelParams = [ "console=ttyS0" ];
+    boot.kernelParams = map (c: "console=${c}") config.boot.consoles;
     boot.loader.grub.device = "nodev";
 
     boot.loader.grub.efiSupport = true;
