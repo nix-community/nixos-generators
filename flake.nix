@@ -34,6 +34,7 @@
         drvPath
         outPath
         outputName
+        system
         ;
       type = "derivation";
     };
