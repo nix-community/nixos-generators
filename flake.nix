@@ -69,6 +69,7 @@
         specialArgs ? {},
         modules ? [],
         customFormats ? {},
+        nixosSystem ? null  
       }: let
         extraFormats =
           lib.mapAttrs' (
@@ -81,23 +82,25 @@
                 })
           )
           customFormats;
-        formatModule = builtins.getAttr format (self.nixosModules // extraFormats);
-        image = nixpkgs.lib.nixosSystem {
-          inherit pkgs specialArgs;
-          system =
-            if system != null
-            then system
-            else pkgs.system;
-          lib =
-            if lib != null
-            then lib
-            else pkgs.lib;
-          modules =
-            [
-              formatModule
-            ]
-            ++ modules;
-        };
+        formatModule = builtins.getAttr format (self.nixosModules // extraFormats);        
+        image = if nixosSystem != null
+                then nixosSystem.extendModules { modules = [ formatModule ] ++ modules; }
+                else nixpkgs.lib.nixosSystem {
+                  inherit pkgs specialArgs;
+                  system =
+                    if system != null
+                    then system
+                    else pkgs.system;
+                  lib =
+                    if lib != null
+                    then lib
+                    else pkgs.lib;
+                  modules =
+                    [
+                      formatModule
+                    ]
+                    ++ modules;
+                };
       in
         image.config.system.build.${image.config.formatAttr};
     }
