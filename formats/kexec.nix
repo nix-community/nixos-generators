@@ -6,21 +6,47 @@
   options,
   ...
 }: let
-  clever-tests = builtins.fetchGit {
-    url = "https://github.com/cleverca22/nix-tests";
-    rev = "a9a316ad89bfd791df4953c1a8b4e8ed77995a18"; # master on 2021-06-13
-  };
-
   inherit (import ../lib.nix {inherit lib options;}) maybe;
 in {
   imports = [
     "${toString modulesPath}/installer/netboot/netboot-minimal.nix"
-    "${clever-tests}/kexec/autoreboot.nix"
-    "${clever-tests}/kexec/kexec.nix"
-    "${clever-tests}/kexec/justdoit.nix"
   ];
 
   system.build = rec {
+    image = pkgs.runCommand "image" { buildInputs = [ pkgs.nukeReferences ]; } ''
+      mkdir $out
+      cp ${config.system.build.kernel}/${config.system.boot.loader.kernelFile} $out/kernel
+      cp ${config.system.build.netbootRamdisk}/initrd $out/initrd
+      echo "init=${builtins.unsafeDiscardStringContext config.system.build.toplevel}/init ${toString config.boot.kernelParams}" > $out/cmdline
+      nuke-refs $out/kernel
+    '';
+    
+    kexec_script = pkgs.writeTextFile {
+      executable = true;
+      name = "kexec-nixos";
+      text = ''
+        #!${pkgs.stdenv.shell}
+        export PATH=${pkgs.kexectools}/bin:${pkgs.cpio}/bin:$PATH
+        set -x
+        set -e
+        cd $(mktemp -d)
+        pwd
+        mkdir initrd
+        pushd initrd
+        if [ -e /ssh_pubkey ]; then
+          cat /ssh_pubkey >> authorized_keys
+        fi
+        find -type f | cpio -o -H newc | gzip -9 > ../extra.gz
+        popd
+        cat ${image}/initrd extra.gz > final.gz
+
+        kexec -l ${image}/kernel --initrd=final.gz --append="init=${builtins.unsafeDiscardStringContext config.system.build.toplevel}/init ${toString config.boot.kernelParams}"
+        sync
+        echo "executing kernel, filesystems will be improperly umounted"
+        kexec -e
+        '';
+    };
+
     kexec_tarball = maybe.mkForce (pkgs.callPackage "${toString modulesPath}/../lib/make-system-tarball.nix" {
       storeContents = [
         {
@@ -68,4 +94,9 @@ in {
 
   formatAttr = "kexec_tarball";
   fileExtension = "*/tarball/*.tar.xz";
+
+  boot.initrd.postMountCommands = ''
+    mkdir -p /mnt-root/root/.ssh/
+    cp /authorized_keys /mnt-root/root/.ssh/
+  '';
 }
