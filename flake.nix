@@ -64,6 +64,7 @@
       nixosGenerate = {
         pkgs ? null,
         lib ? nixpkgs.lib,
+        nixosSystem ? nixpkgs.lib.nixosSystem,
         format,
         system ? null,
         specialArgs ? {},
@@ -82,7 +83,7 @@
           )
           customFormats;
         formatModule = builtins.getAttr format (self.nixosModules // extraFormats);
-        image = nixpkgs.lib.nixosSystem {
+        image = nixosSystem {
           inherit pkgs specialArgs;
           system =
             if system != null
