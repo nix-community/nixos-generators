@@ -114,19 +114,6 @@
           pkgs = nixpkgs.legacyPackages."${system}";
         in rec {
           default = nixos-generate;
-          nixos-generators =
-            nixpkgs.lib.warn ''
-
-              Deprecation note from: github:nix-community/nixos-generators
-
-              Was renamed:
-
-              Was: nixos-generators.packages.${system}.nixos-generators
-              Now: nixos-generators.packages.${system}.nixos-generate
-
-              Plase adapt your references
-            ''
-            nixos-generate;
           nixos-generate = pkgs.stdenv.mkDerivation {
             name = "nixos-generate";
             src = ./.;
