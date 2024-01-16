@@ -114,19 +114,6 @@
           pkgs = nixpkgs.legacyPackages."${system}";
         in rec {
           default = nixos-generate;
-          nixos-generators =
-            nixpkgs.lib.warn ''
-
-              Deprecation note from: github:nix-community/nixos-generators
-
-              Was renamed:
-
-              Was: nixos-generators.packages.${system}.nixos-generators
-              Now: nixos-generators.packages.${system}.nixos-generate
-
-              Plase adapt your references
-            ''
-            nixos-generate;
           nixos-generate = pkgs.stdenv.mkDerivation {
             name = "nixos-generate";
             src = ./.;
@@ -144,7 +131,11 @@
           lib.recursiveUpdate
           (callFlake ./checks/test-all-formats-flake/flake.nix).checks
           (
-            lib.genAttrs ["x86_64-linux" "aarch64-linux"]
+            lib.genAttrs [
+              "x86_64-linux"
+              # We currently don't have kvm support on our builder
+              #"aarch64-linux"
+            ]
             (
               system: let
                 allFormats = import ./checks/test-all-formats.nix {

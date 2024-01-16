@@ -51,7 +51,6 @@
 
       grub = {
         enable = true;
-        version = 2;
         forceInstall = true;
         device = "nodev";
         fsIdentifier = "label";
