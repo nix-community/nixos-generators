@@ -131,7 +131,11 @@
           lib.recursiveUpdate
           (callFlake ./checks/test-all-formats-flake/flake.nix).checks
           (
-            lib.genAttrs ["x86_64-linux" "aarch64-linux"]
+            lib.genAttrs [
+              "x86_64-linux"
+              # We currently don't have kvm support on our builder
+              #"aarch64-linux"
+            ]
             (
               system: let
                 allFormats = import ./checks/test-all-formats.nix {
