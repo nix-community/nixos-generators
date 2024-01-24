@@ -64,7 +64,7 @@
 
         # Link /boot/grub2 to /boot/grub:
         extraInstallCommands = ''
-          ln -fs /boot/grub /boot/grub2
+          ${pkgs.coreutils}/bin/ln -fs /boot/grub /boot/grub2
         '';
 
         # Remove GRUB splash image:
