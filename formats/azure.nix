@@ -4,4 +4,5 @@
   ];
 
   formatAttr = "azureImage";
+  fileExtension = ".vhd";
 }
