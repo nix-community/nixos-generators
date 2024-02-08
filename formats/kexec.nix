@@ -93,7 +93,7 @@ in {
   networking.hostName = lib.mkDefault "kexec";
 
   formatAttr = "kexec_tarball";
-  fileExtension = "*/tarball/*.tar.xz";
+  fileExtension = ".tar.xz";
 
   boot.initrd.postMountCommands = ''
     mkdir -p /mnt-root/root/.ssh/
