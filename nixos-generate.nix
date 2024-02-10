@@ -2,6 +2,7 @@
   nixpkgs ? <nixpkgs>,
   configuration ? <nixos-config>,
   system ? builtins.currentSystem,
+  diskSize ? "auto",
   formatConfig,
   flakeUri ? null,
   flakeAttr ? null,
@@ -20,6 +21,9 @@ in
   else
     import "${toString nixpkgs}/nixos/lib/eval-config.nix" {
       inherit system;
+      specialArgs = {
+        diskSize = diskSize;
+      };
       modules = [
         module
         formatConfig

@@ -97,6 +97,27 @@ image was recently merged in nixpkgs):
 NIX_PATH=nixpkgs=../nixpkgs nixos-generate -f do
 ```
 
+## Setting the disk image size
+
+To specify the size of the generated disk image, use the `--disk-size` argument,
+specifying the size in megabytes. This is currently supported by the following
+formats. If this argument is unspecified it defaults to automatic sizing based
+on the generated NixOS build.
+
+- hyperv
+- proxmox
+- qcow
+- raw-efi
+- raw
+- vm
+- vm-nogui
+- vmware
+
+Example (20GB disk):
+```
+nixos-generate -c <your_config.nix> -f <format> --disk-size 20480
+```
+
 ## Cross Compiling
 
 To cross compile nixos images for other architectures you have to configure
