@@ -214,6 +214,7 @@ Images can be built from that flake by running:
           # ...
         };
       };
+    };
 
     # the evaluated machine
     nixosConfigurations.my-machine = nixpkgs.lib.nixosSystem {
