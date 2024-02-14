@@ -193,7 +193,7 @@ Images can be built from that flake by running:
 
     # A single nixos config outputting multiple formats.
     # Alternatively put this in a configuration.nix.
-    nixosModules.my-machine = {config, ...}: {
+    nixosModules.my-machine = { config, ... }: {
       imports = [
         nixos-generators.nixosModules.all-formats
       ];
@@ -201,13 +201,13 @@ Images can be built from that flake by running:
       nixpkgs.hostPlatform = "x86_64-linux";
 
       # customize an existing format
-      formatConfigs.vmware = {config, ...}: {
+      formatConfigs.vmware = { config, ... }: {
         services.openssh.enable = true;
       };
 
       # define a new format
-      formatConfigs.my-custom-format = {config, modulesPath, ...}: {
-        imports = ["${toString modulesPath}/installer/cd-dvd/installation-cd-base.nix"];
+      formatConfigs.my-custom-format = { config, modulesPath, ... }: {
+        imports = [ "${toString modulesPath}/installer/cd-dvd/installation-cd-base.nix" ];
         formatAttr = "isoImage";
         fileExtension = ".iso";
         networking.wireless.networks = {
@@ -215,9 +215,10 @@ Images can be built from that flake by running:
         };
       };
 
-    # the evaluated machine
-    nixosConfigurations.my-machine = nixpkgs.lib.nixosSystem {
-      modules = [self.nixosModules.my-machine];
+      # the evaluated machine
+      nixosConfigurations.my-machine = nixpkgs.lib.nixosSystem {
+        modules = [ self.nixosModules.my-machine ];
+      };
     };
   };
 }
