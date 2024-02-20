@@ -9,6 +9,7 @@ For example:
 ```
 nixos-generate -f iso
 ```
+
 or
 
 ```
@@ -64,6 +65,7 @@ openstack | qcow2 image for openstack
 proxmox | [VMA](https://pve.proxmox.com/wiki/VMA) file for proxmox
 proxmox-lxc | LXC template for proxmox
 qcow | qcow2 image
+qcow-efi | qcow2 image with efi support
 raw | raw image with bios/mbr. for physical hardware, see the 'raw and raw-efi' section
 raw-efi | raw image with efi support. for physical hardware, see the 'raw and raw-efi' section
 sd-aarch64 | Like sd-aarch64-installer, but does not use default installer image config.
@@ -124,6 +126,7 @@ To cross compile nixos images for other architectures you have to configure
 `boot.binfmt.emulatedSystems` or `boot.binfmt.registrations` on your host system.
 
 In your system `configuration.nix`:
+
 ```nix
 {
   # Enable binfmt emulation of aarch64-linux.
@@ -132,6 +135,7 @@ In your system `configuration.nix`:
 ```
 
 Alternatively, if you want to target other architectures:
+
 ```nix
 # Define qemu-arm-static source.
 let qemu-arm-static = pkgs.stdenv.mkDerivation {
@@ -229,7 +233,7 @@ Images can be built from that flake by running:
 `nixos-generators` can be included as a `Flake` input and provides
 a `nixos-generate` function for building images as `Flake` outputs. This
 approach pins all dependencies and allows for conveniently defining multiple
-output types based on one config. 
+output types based on one config.
 
 An example `flake.nix` demonstrating this approach is below. `vmware` or
 `virtualbox` images can be built from the same `configuration.nix` by running
