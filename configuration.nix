@@ -1,7 +1,5 @@
 {
-  config,
   lib,
-  pkgs,
   ...
 }: {
   services.sshd.enable = true;
@@ -12,6 +10,6 @@
   system.stateVersion = lib.version;
 
   users.users.root.password = "nixos";
-  services.openssh.settings.PermitRootLogin = lib.mkDefault "yes";
-  services.getty.autologinUser = lib.mkDefault "root";
+  services.openssh.settings.PermitRootLogin = lib.mkOverride 999 "yes";
+  services.getty.autologinUser = lib.mkOverride 999 "root";
 }
