@@ -83,7 +83,8 @@ in {
     '';
   };
 
-  boot.loader.grub.enable = false;
+  boot.loader.grub.enable = lib.mkForce false;
+  boot.loader.systemd-boot.enable = lib.mkForce false;
   boot.kernelParams = [
     "console=ttyS0,115200" # allows certain forms of remote access, if the hardware is setup right
     "panic=30"
