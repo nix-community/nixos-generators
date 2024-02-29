@@ -42,6 +42,7 @@ Options:
 * -o, --out-link: specify the outlink location for nix-build
 * --cores : to control the maximum amount of parallelism. (see nix-build documentation)
 * --option : Passed to nix-build (see nix-build documentation).
+* --special-arg : Passed to the `specialArgs` variable
 * -I KEY=VALUE: Add a key to the Nix expression search path.
 USAGE
 }
@@ -82,6 +83,10 @@ while [[ $# -gt 0 ]]; do
     --disk-size)
       nix_build_args+=("--argstr" "diskSize" "$2")
       shift
+      ;;
+    --special-arg)
+      nix_build_args+=("--argstr" "$2" "$3")
+      shift 2
       ;;
     --option)
       nix_build_args+=("$1" "$2" "$3")
