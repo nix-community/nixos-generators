@@ -10,9 +10,7 @@ in {
     "${toString modulesPath}/virtualisation/qemu-vm.nix"
   ];
 
-  virtualisation.diskSize =
-    if diskSize == "auto" then null
-    else lib.strings.toIntBase10 diskSize;
+  virtualisation.diskSize = lib.mkIf (diskSize != "auto") (lib.strings.toIntBase10 diskSize);
 
   formatAttr = "vm";
 }
