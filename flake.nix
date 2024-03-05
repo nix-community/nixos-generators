@@ -76,10 +76,12 @@
             name: value:
               lib.nameValuePair
               name
-              (value
-                // {
-                  imports = value.imports or [] ++ [./format-module.nix];
-                })
+              {
+                imports = [
+                  value
+                  ./format-module.nix
+                ];
+              }
           )
           customFormats;
         formatModule = builtins.getAttr format (self.nixosModules // extraFormats);
