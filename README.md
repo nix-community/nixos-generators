@@ -231,7 +231,7 @@ Images can be built from that flake by running:
 ## Using in a Flake
 
 `nixos-generators` can be included as a `Flake` input and provides
-a `nixos-generate` function for building images as `Flake` outputs. This
+a `nixosGenerate` function for building images as `Flake` outputs. This
 approach pins all dependencies and allows for conveniently defining multiple
 output types based on one config.
 
