@@ -116,17 +116,7 @@
           pkgs = nixpkgs.legacyPackages."${system}";
         in rec {
           default = nixos-generate;
-          nixos-generate = pkgs.stdenv.mkDerivation {
-            name = "nixos-generate";
-            src = ./.;
-            meta.description = "Collection of image builders";
-            nativeBuildInputs = with pkgs; [makeWrapper];
-            installFlags = ["PREFIX=$(out)"];
-            postFixup = ''
-              wrapProgram $out/bin/nixos-generate \
-                --prefix PATH : ${pkgs.lib.makeBinPath (with pkgs; [jq coreutils findutils])}
-            '';
-          };
+          nixos-generate = pkgs.callPackage ./package.nix {};
         });
 
         checks =
