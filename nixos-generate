@@ -139,7 +139,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if ! $has_outlink; then
-  nix_build_args+=(--no-out-link)
+  nix_build_args+=(--no-link)
 fi
 
 if [[ -z $format_path ]]; then
@@ -174,7 +174,7 @@ fi
 formatAttr=$(nix-instantiate "${nix_args[@]}" --eval --json -A config.formatAttr | jq -r .)
 fileExtension=$(nix-instantiate "${nix_args[@]}" --eval --json -A config.fileExtension | jq -r .)
 
-out=$(nix-build "${nix_args[@]}" "${nix_build_args[@]}" -A "config.system.build.$formatAttr")
+out=$(nix build --extra-experimental-features nix-command -L --print-out-paths --file "${nix_args[@]}" "${nix_build_args[@]}" "config.system.build.$formatAttr")
 
 if [[ -z $run ]]; then
   # show the first file, ignoring nix-support
