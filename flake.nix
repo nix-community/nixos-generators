@@ -5,7 +5,8 @@
   inputs.nixlib.url = "github:nix-community/nixpkgs.lib";
 
   # Bin dependency
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  #inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs.nixpkgs.url = "github:Mic92/nixpkgs/digital-ocean";
 
   outputs = {
     self,
