@@ -250,7 +250,7 @@ Images can be built from that flake by running:
 
     # A single nixos config outputting multiple formats.
     # Alternatively put this in a configuration.nix.
-    nixosModules.my-machine = { config, ... }: {
+    nixosModules.myFormats = { config, ... }: {
       imports = [
         nixos-generators.nixosModules.all-formats
       ];
@@ -271,11 +271,11 @@ Images can be built from that flake by running:
           # ...
         };
       };
+    };
 
-      # the evaluated machine
-      nixosConfigurations.my-machine = nixpkgs.lib.nixosSystem {
-        modules = [ self.nixosModules.my-machine ];
-      };
+    # a machine consuming the module
+    nixosConfigurations.my-machine = nixpkgs.lib.nixosSystem {
+      modules = [ self.nixosModules.myFormats ];
     };
   };
 }
