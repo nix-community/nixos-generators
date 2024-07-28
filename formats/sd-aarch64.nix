@@ -10,4 +10,5 @@
   ];
 
   formatAttr = "sdImage";
+  fileExtension = ".img.*";
 }
