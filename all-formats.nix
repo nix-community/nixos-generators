@@ -29,6 +29,11 @@
   # evaluated configs for all formats
   allConfigs = lib.mapAttrs (formatName: evalFormat) config.formatConfigs;
 
+  # adds an evaluated `config` to the derivation attributes of a format for introspection
+  exposeConfig = conf: output: output.overrideAttrs (old: {
+    passthru.config = conf.config;
+  });
+
   # attrset of formats to be exposed under config.system.formats
   formats = lib.flip lib.mapAttrs allConfigs (
     formatName: conf: pkgs.runCommand "${conf.config.system.build.${conf.config.formatAttr}.name}${conf.config.fileExtension}" {} ''
