@@ -5,6 +5,7 @@
   coreutils,
   findutils,
   lib,
+  gawk,
 }:
 stdenv.mkDerivation {
   name = "nixos-generate";
@@ -14,6 +15,6 @@ stdenv.mkDerivation {
   installFlags = ["PREFIX=$(out)"];
   postFixup = ''
     wrapProgram $out/bin/nixos-generate \
-      --prefix PATH : ${lib.makeBinPath [jq coreutils findutils]}
+      --prefix PATH : ${lib.makeBinPath [jq coreutils findutils gawk]}
   '';
 }
