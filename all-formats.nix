@@ -40,6 +40,11 @@
       pkgs.runCommand "${conf.config.system.build.${conf.config.formatAttr}.name}" {} ''
         set -efu
         target=$(find '${conf.config.system.build.${conf.config.formatAttr}}' -name '*${conf.config.fileExtension}' -xtype f -print -quit)
+        if [ -z "$target" ]; then
+          echo "No target file found for ${conf.config.formatAttr} format"
+          echo "Check the content of this build path: ${conf.config.system.build.${conf.config.formatAttr}}"
+          exit 1
+        fi
         mkdir $out
         ln -s "$target" "$out/$(basename "$target")"
       ''
