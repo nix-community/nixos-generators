@@ -27,5 +27,7 @@ in {
     partitionTableType = "efi";
     diskSize = specialArgs.diskSize or "auto";
     format = "raw";
-  });
+  } // (lib.optionalAttrs ((builtins.hasAttr "bootSize" specialArgs) && specialArgs.bootSize != null) {
+    bootSize = "${builtins.toString specialArgs.bootSize}M";
+  }));
 }

@@ -28,12 +28,14 @@
   boot.loader.grub.efiInstallAsRemovable = lib.mkIf (pkgs.stdenv.system != "x86_64-linux") (lib.mkDefault true);
   boot.loader.timeout = 0;
 
-  system.build.qcow = import "${toString modulesPath}/../lib/make-disk-image.nix" {
+  system.build.qcow = import "${toString modulesPath}/../lib/make-disk-image.nix" ({
     inherit lib config pkgs;
     diskSize = specialArgs.diskSize or "auto";
     format = "qcow2";
     partitionTableType = "hybrid";
-  };
+  } // (lib.optionalAttrs ((builtins.hasAttr "bootSize" specialArgs) && specialArgs.bootSize != null) {
+    bootSize = "${builtins.toString specialArgs.bootSize}M";
+  }));
 
   formatAttr = "qcow";
   fileExtension = ".qcow2";
