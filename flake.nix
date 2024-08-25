@@ -65,6 +65,7 @@
         pkgs ? null,
         lib ? nixpkgs.lib,
         nixosSystem ? nixpkgs.lib.nixosSystem,
+        nixosConfig ? { },
         format,
         system ? null,
         specialArgs ? {},
@@ -100,7 +101,7 @@
               formatModule
             ]
             ++ modules;
-        };
+        } // nixosConfig;
       in
         image.config.system.build.${image.config.formatAttr};
     }
