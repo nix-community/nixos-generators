@@ -70,6 +70,7 @@ raw | raw image with bios/mbr. for physical hardware, see the 'raw and raw-efi' 
 raw-efi | raw image with efi support. for physical hardware, see the 'raw and raw-efi' section
 sd-aarch64 | Like sd-aarch64-installer, but does not use default installer image config.
 sd-aarch64-installer | create an installer sd card for aarch64. For cross compiling use `--system aarch64-linux` and read the cross-compile section.
+sd-x86_64 | sd card image for x86_64 systems
 vagrant-virtualbox | VirtualBox image for [Vagrant](https://www.vagrantup.com/)
 virtualbox | virtualbox VM
 vm | only used as a qemu-kvm runner
