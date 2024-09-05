@@ -5,7 +5,7 @@
   inputs.nixlib.url = "github:nix-community/nixpkgs.lib";
 
   # Bin dependency
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs.nixpkgs.url = "github:phaer/nixpkgs/virtualisation-diskSize";
 
   outputs = {
     self,

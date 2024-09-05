@@ -17,16 +17,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1725194671,
-        "narHash": "sha256-tLGCFEFTB5TaOKkpfw3iYT9dnk4awTP/q4w+ROpMfuw=",
-        "owner": "NixOS",
+        "lastModified": 1725538269,
+        "narHash": "sha256-vE3hlvc9McYmlaQhV3TpcjAsrzEI9B6Uvi9xKaFIe2o=",
+        "owner": "phaer",
         "repo": "nixpkgs",
-        "rev": "b833ff01a0d694b910daca6e2ff4a3f26dee478c",
+        "rev": "8ac1edf54e822101566459c042194725c3e5af80",
         "type": "github"
       },
       "original": {
-        "owner": "NixOS",
-        "ref": "nixpkgs-unstable",
+        "owner": "phaer",
+        "ref": "virtualisation-diskSize",
         "repo": "nixpkgs",
         "type": "github"
       }

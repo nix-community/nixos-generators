@@ -1,4 +1,8 @@
-{lib, modulesPath, ...}: {
+{
+  lib,
+  modulesPath,
+  ...
+}: {
   imports = [
     "${toString modulesPath}/virtualisation/proxmox-lxc.nix"
   ];
