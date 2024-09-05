@@ -12,14 +12,14 @@
   formatAttr = "linodeImage";
   fileExtension = ".img.gz";
 
-  system.build.linodeImage = import "${toString modulesPath}/../lib/make-disk-image.nix" {
+  system.build.linodeImage = lib.mkForce (import "${toString modulesPath}/../lib/make-disk-image.nix" {
     inherit lib config pkgs;
     partitionTableType = "none";
     format = "raw";
     postVM = ''
       ${pkgs.pigz}/bin/pigz -9 $out/nixos.img
     '';
-  };
+  });
 
   # Enable LISH and Linode booting w/ GRUB
   boot = {
