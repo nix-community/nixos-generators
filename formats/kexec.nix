@@ -13,14 +13,14 @@ in {
   ];
 
   system.build = rec {
-    image = pkgs.runCommand "image" { buildInputs = [ pkgs.nukeReferences ]; } ''
+    image = pkgs.runCommand "image" {buildInputs = [pkgs.nukeReferences];} ''
       mkdir $out
       cp ${config.system.build.kernel}/${config.system.boot.loader.kernelFile} $out/kernel
       cp ${config.system.build.netbootRamdisk}/initrd $out/initrd
       echo "init=${builtins.unsafeDiscardStringContext config.system.build.toplevel}/init ${toString config.boot.kernelParams}" > $out/cmdline
       nuke-refs $out/kernel
     '';
-    
+
     kexec_script = pkgs.writeTextFile {
       executable = true;
       name = "kexec-nixos";
@@ -44,7 +44,7 @@ in {
         sync
         echo "executing kernel, filesystems will be improperly umounted"
         kexec -e
-        '';
+      '';
     };
 
     kexec_tarball = maybe.mkForce (pkgs.callPackage "${toString modulesPath}/../lib/make-system-tarball.nix" {
