@@ -6,7 +6,7 @@
   ...
 }: {
   imports = [
-    "${toString modulesPath}/modules/virtualisation/linode-image.nix"
+    "${toString modulesPath}/virtualisation/linode-image.nix"
   ];
 
   formatAttr = "linodeImage";
