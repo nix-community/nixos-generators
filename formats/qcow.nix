@@ -3,7 +3,6 @@
   lib,
   pkgs,
   modulesPath,
-  specialArgs,
   ...
 }: {
   # for virtio kernel drivers
@@ -30,7 +29,7 @@
 
   system.build.qcow = import "${toString modulesPath}/../lib/make-disk-image.nix" {
     inherit lib config pkgs;
-    diskSize = specialArgs.diskSize or "auto";
+    inherit (config.virtualisation) diskSize;
     format = "qcow2";
     partitionTableType = "hybrid";
   };

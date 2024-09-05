@@ -21,10 +21,8 @@ in
   else
     import "${toString nixpkgs}/nixos/lib/eval-config.nix" {
       inherit system;
-      specialArgs = {
-        diskSize = diskSize;
-      };
       modules = [
+        {virtualisation.diskSize = diskSize;}
         module
         formatConfig
         configuration

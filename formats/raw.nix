@@ -3,7 +3,6 @@
   lib,
   pkgs,
   modulesPath,
-  specialArgs,
   ...
 }: {
   fileSystems."/" = {
@@ -22,7 +21,7 @@
 
   system.build.raw = import "${toString modulesPath}/../lib/make-disk-image.nix" {
     inherit lib config pkgs;
-    diskSize = specialArgs.diskSize or "auto";
+    inherit (config.virtualisation) diskSize;
     format = "raw";
   };
 

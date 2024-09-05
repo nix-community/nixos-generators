@@ -122,7 +122,7 @@ Example (20GB disk):
 nixos-generate -c <your_config.nix> -f <format> --disk-size 20480
 ```
 
-To set the disk size in `flake.nix`, set `diskSize` in the `specialArgs` argument of the `nixosGenerate` function.
+To set the disk size in `flake.nix`, set the `virtualisation.diskSize` module option.
 
 ```nix
 {
@@ -158,12 +158,15 @@ To set the disk size in `flake.nix`, set `diskSize` in the `specialArgs` argumen
           system = system;
           specialArgs = {
             pkgs = pkgs;
-            diskSize = 20 * 1024;
           };
           modules = [
-            # Pin nixpkgs to the flake input, so that the packages installed
-            # come from the flake inputs.nixpkgs.url.
-            ({ ... }: { nix.registry.nixpkgs.flake = nixpkgs; })
+            {
+              # Pin nixpkgs to the flake input, so that the packages installed
+              # come from the flake inputs.nixpkgs.url.
+              nix.registry.nixpkgs.flake = nixpkgs;
+              # set disk size to to 20G
+              virtualisation.diskSize = 20 * 1024;
+            }
             # Apply the rest of the config.
             ./configuration.nix
           ];

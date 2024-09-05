@@ -20,12 +20,6 @@
         description = "Kernel console boot flags to pass to boot.kernelParams";
         example = ["ttyS2,115200"];
       };
-
-      diskSize = lib.mkOption {
-        default = "auto";
-        description = "The disk size in megabytes of the system disk image.";
-        type = with lib.types; oneOf [ints.positive (enum ["auto"])];
-      };
     };
   };
 
@@ -51,7 +45,7 @@
 
     system.build.qcow-efi = import "${toString modulesPath}/../lib/make-disk-image.nix" {
       inherit lib config pkgs;
-      diskSize = config.boot.diskSize;
+      inherit (config.virtualisation) diskSize;
       format = "qcow2";
       partitionTableType = "efi";
     };
