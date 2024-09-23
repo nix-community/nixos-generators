@@ -1,7 +1,6 @@
 {
   modulesPath,
   specialArgs,
-  config,
   ...
 }: {
   imports = [
