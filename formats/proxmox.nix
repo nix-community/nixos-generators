@@ -12,7 +12,7 @@
     cloudInit = {
       enable = specialArgs.enableCloudInit or "auto";
       defaultStorage = specialArgs.defaultStorage or "auto";
-      device = specialArgs.device "auto";
+      device = specialArgs.device or "auto";
     };
   };
 
