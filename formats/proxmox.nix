@@ -1,6 +1,7 @@
 {
   modulesPath,
   specialArgs,
+  config,
   ...
 }: {
   imports = [
@@ -8,11 +9,11 @@
   ];
 
   proxmox = {
-    qemuConf.diskSize = specialArgs.diskSize or "auto";
+    qemuConf.diskSize = specialArgs.diskSize or config.proxmox.qemuConf.diskSize.default;
     cloudInit = {
-      enable = specialArgs.enableCloudInit or "auto";
-      defaultStorage = specialArgs.defaultStorage or "auto";
-      device = specialArgs.device or "auto";
+      enable = specialArgs.enableCloudInit or config.proxmox.cloudInit.enableCloudInit.default;
+      defaultStorage = specialArgs.defaultStorage or config.proxmox.cloudInit.defaultStorage.default;
+      device = specialArgs.device or config.proxmox.cloudInit.device.default;
     };
   };
 
