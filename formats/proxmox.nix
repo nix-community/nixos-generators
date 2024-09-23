@@ -9,11 +9,11 @@
   ];
 
   proxmox = {
-    qemuConf.diskSize = specialArgs.diskSize or config.proxmox.qemuConf.diskSize.default;
+    qemuConf.diskSize = specialArgs.diskSize or "auto";
     cloudInit = {
-      enable = specialArgs.enableCloudInit or config.proxmox.cloudInit.enableCloudInit.default;
-      defaultStorage = specialArgs.defaultStorage or config.proxmox.cloudInit.defaultStorage.default;
-      device = specialArgs.device or config.proxmox.cloudInit.device.default;
+      enable = specialArgs.enableCloudInit or true; 
+      defaultStorage = specialArgs.defaultStorage or "local-lvm";
+      device = specialArgs.device or  "ide2";
     };
   };
 
