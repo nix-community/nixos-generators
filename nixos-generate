@@ -80,6 +80,10 @@ while [[ $# -gt 0 ]]; do
       cores=$2
       shift
       ;;
+    --boot-size)
+      nix_build_args+=("--argstr" "bootSize" "$2")
+      shift
+      ;;
     --disk-size)
       nix_build_args+=("--argstr" "diskSize" "$2")
       shift

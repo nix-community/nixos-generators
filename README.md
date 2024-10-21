@@ -110,6 +110,7 @@ on the generated NixOS build.
 - hyperv
 - proxmox
 - qcow
+- qcow-efi
 - raw-efi
 - raw
 - vm
@@ -119,10 +120,10 @@ on the generated NixOS build.
 Example (20GB disk):
 
 ```bash
-nixos-generate -c <your_config.nix> -f <format> --disk-size 20480
+nixos-generate -c <your_config.nix> -f <format> --boot-size 512 --disk-size 20480
 ```
 
-To set the disk size in `flake.nix`, set `diskSize` in the `specialArgs` argument of the `nixosGenerate` function.
+To set the disk size in `flake.nix`, set `diskSize` in the `specialArgs` argument of the `nixosGenerate` function. Similarly, you can also set `bootSize` in the `specialArgs` argument in the same manner, as well as use the `--boot-size` argument to specify the size in megabytes for the `/boot` partition.
 
 ```nix
 {
@@ -158,7 +159,8 @@ To set the disk size in `flake.nix`, set `diskSize` in the `specialArgs` argumen
           system = system;
           specialArgs = {
             pkgs = pkgs;
-            diskSize = 20 * 1024;
+            bootSize = 512;       # 500 MB for /boot
+            diskSize = 20 * 1024; # 20 GB for /
           };
           modules = [
             # Pin nixpkgs to the flake input, so that the packages installed
@@ -317,14 +319,14 @@ multiple custom formats.  `nixosGenerate` will then match against these custom f
           # ./configuration.nix
         ];
         format = "vmware";
-        
+
         # optional arguments:
         # explicit nixpkgs and lib:
         # pkgs = nixpkgs.legacyPackages.x86_64-linux;
         # lib = nixpkgs.legacyPackages.x86_64-linux.lib;
         # additional arguments to pass to modules:
         # specialArgs = { myExtraArg = "foobar"; };
-        
+
         # you can also define your own custom formats
         # customFormats = { "myFormat" = <myFormatModule>; ... };
         # format = "myFormat";
