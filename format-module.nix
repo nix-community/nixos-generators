@@ -1,10 +1,16 @@
-{lib, ...}: rec {
+{
+  lib,
+  modulesPath,
+  ...
+}: {
   _file = ./format-module.nix;
   # This deliberate key makes sure this module will be deduplicated
   # regardless of the accessor path: either via flake's nixosModule
   # or as part of the nixos-generate command. These two store paths
   # of the module may differ and hence don't serve as a key
   key = "github:nix-community/nixos-generators/format-module.nix";
+
+  imports = ["${modulesPath}/virtualisation/disk-size-option.nix"];
 
   options = {
     fileExtension = lib.mkOption {
