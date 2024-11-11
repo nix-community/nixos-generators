@@ -1,5 +1,10 @@
-{ config, lib, pkgs, modulesPath, ... }:
 {
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}: {
   # for virtio kernel drivers
   imports = [
     "${toString modulesPath}/profiles/qemu-guest.nix"
@@ -8,17 +13,12 @@
   options = {
     boot = {
       consoles = lib.mkOption {
-        default = [ "ttyS0" ] ++
-                  (lib.optional (pkgs.stdenv.hostPlatform.isAarch) "ttyAMA0,115200") ++
-                  (lib.optional (pkgs.stdenv.hostPlatform.isRiscV64) "ttySIF0,115200");
+        default =
+          ["ttyS0"]
+          ++ (lib.optional (pkgs.stdenv.hostPlatform.isAarch) "ttyAMA0,115200")
+          ++ (lib.optional (pkgs.stdenv.hostPlatform.isRiscV64) "ttySIF0,115200");
         description = "Kernel console boot flags to pass to boot.kernelParams";
-        example = [ "ttyS2,115200" ];
-      };
-
-      diskSize = lib.mkOption {
-        default = "auto";
-        description = "The disk size in megabytes of the system disk image.";
-        type = with lib.types; oneOf [ ints.positive (enum [ "auto" ])];
+        example = ["ttyS2,115200"];
       };
     };
   };
@@ -45,7 +45,7 @@
 
     system.build.qcow-efi = import "${toString modulesPath}/../lib/make-disk-image.nix" {
       inherit lib config pkgs;
-      diskSize = config.boot.diskSize;
+      inherit (config.virtualisation) diskSize;
       format = "qcow2";
       partitionTableType = "efi";
     };
@@ -54,4 +54,3 @@
     fileExtension = ".qcow2";
   };
 }
-

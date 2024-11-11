@@ -13,7 +13,7 @@
 
   system.build.cloudstackImage = import "${toString modulesPath}/../lib/make-disk-image.nix" {
     inherit lib config pkgs;
-    diskSize = 8192;
+    inherit (config.virtualisation) diskSize;
     format = "qcow2";
     configFile =
       pkgs.writeText "configuration.nix"

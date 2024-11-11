@@ -1,16 +1,11 @@
 {
-  modulesPath,
-  specialArgs,
   lib,
+  modulesPath,
   ...
-}: let
-  diskSize = specialArgs.diskSize or "auto";
-in {
+}: {
   imports = [
     "${toString modulesPath}/virtualisation/qemu-vm.nix"
   ];
-
-  virtualisation.diskSize = lib.mkIf (diskSize != "auto") (lib.strings.toIntBase10 diskSize);
-
+  virtualisation.diskSize = lib.mkDefault (2 * 1024);
   formatAttr = "vm";
 }

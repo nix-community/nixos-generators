@@ -30,25 +30,27 @@
   allConfigs = lib.mapAttrs (formatName: evalFormat) config.formatConfigs;
 
   # adds an evaluated `config` to the derivation attributes of a format for introspection
-  exposeConfig = conf: output: output.overrideAttrs (old: {
-    passthru.config = conf.config;
-  });
+  exposeConfig = conf: output:
+    output.overrideAttrs (old: {
+      passthru.config = conf.config;
+    });
 
   # attrset of formats to be exposed under config.system.formats
   formats = lib.flip lib.mapAttrs allConfigs (
-    formatName: conf: exposeConfig conf (
-      pkgs.runCommand "${conf.config.system.build.${conf.config.formatAttr}.name}" {} ''
-        set -efu
-        target=$(find '${conf.config.system.build.${conf.config.formatAttr}}' -name '*${conf.config.fileExtension}' -xtype f -print -quit)
-        if [ -z "$target" ]; then
-          echo "No target file found for ${conf.config.formatAttr} format"
-          echo "Check the content of this build path: ${conf.config.system.build.${conf.config.formatAttr}}"
-          exit 1
-        fi
-        mkdir $out
-        ln -s "$target" "$out/$(basename "$target")"
-      ''
-    )
+    formatName: conf:
+      exposeConfig conf (
+        pkgs.runCommand "${conf.config.system.build.${conf.config.formatAttr}.name}" {} ''
+          set -efu
+          target=$(find '${conf.config.system.build.${conf.config.formatAttr}}' -name '*${conf.config.fileExtension}' -xtype f -print -quit)
+          if [ -z "$target" ]; then
+            echo "No target file found for ${conf.config.formatAttr} format"
+            echo "Check the content of this build path: ${conf.config.system.build.${conf.config.formatAttr}}"
+            exit 1
+          fi
+          mkdir $out
+          ln -s "$target" "$out/$(basename "$target")"
+        ''
+      )
   );
 in {
   _file = ./all-formats.nix;

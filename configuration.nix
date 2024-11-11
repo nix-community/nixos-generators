@@ -1,7 +1,4 @@
-{
-  lib,
-  ...
-}: {
+{lib, ...}: {
   services.sshd.enable = true;
   services.nginx.enable = true;
 
