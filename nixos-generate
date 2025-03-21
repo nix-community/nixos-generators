@@ -4,20 +4,26 @@ set -euo pipefail
 ## Configuration
 
 readonly libexec_dir="${0%/*}"
-readonly format_dir=$libexec_dir/formats
 
 configuration=${NIXOS_CONFIG:-$libexec_dir/configuration.nix}
 flake_uri=
 flake_attr=
+format=
 format_path=
 target_system=
 cores=
 run=
+list_formats=false
+show_format_search_path=false
 nix_args=(
   "$libexec_dir/nixos-generate.nix"
 )
 has_outlink=false
 nix_build_args=()
+
+# `printf' rather than `<<<' to avoid introducing a spurious trailing newline
+mapfile -t -d : format_dirs < <(printf -- '%s' "${NIXOS_GENERATORS_FORMAT_SEARCH_PATH:-}")
+format_dirs+=("$libexec_dir/formats")
 
 ## Functions
 
@@ -34,7 +40,11 @@ Options:
     selects the nixos configuration to build, using flake uri like "~/dotfiles#my-config"
 * -f, --format NAME: select one of the pre-determined formats
 * --format-path PATH: pass a custom format
-* --list: list the available built-in formats
+* --format-search-path DIR:
+    prepend a directory to the list of directories ${0##*/} searches for format definitions
+* --list: list the available formats
+* --show-format-search-path:
+    list the directories ${0##*/} searches for format files
 * --run: runs the configuration in a VM
          only works for the "vm" and "vm-nogui" formats
 * --show-trace: show more detailed nix evaluation location information
@@ -48,9 +58,67 @@ USAGE
 }
 
 listFormats() {
-  for format in "$format_dir"/*.nix; do
-    basename "$format" ".nix"
+  local -A formats
+  local format_dir format_file format
+
+  for format_dir in "${format_dirs[@]}"; do
+    if [[ -n $format_dir ]]; then
+      for format_file in "$format_dir"/*.nix; do
+          if [[ -f "$format_file" ]]; then
+            format=$(basename "$format_file" ".nix")
+            formats["$format"]=1
+          fi
+      done
+    fi
   done
+
+  for format in "${!formats[@]}"; do
+    printf -- '%s\n' "$format"
+  done | sort
+}
+
+showFormatSearchPath() {
+  local format_dir
+
+  for format_dir in "${format_dirs[@]}"; do
+    if [[ -n $format_dir ]]; then
+      printf -- '%s\n' "$format_dir"
+    fi
+  done
+}
+
+validateFormat() {
+  case "${1:-}" in
+    */* | '')
+      abort "not a valid format name: ${1:-<empty>}"
+      return 1
+      ;;
+  esac
+}
+
+findFormat() {
+  local format="${1?}"
+  shift
+
+  validateFormat "$format" || return
+
+  local -n ref_var="${1:-format_file}"
+  shift
+
+  local format_dir maybe_format_file
+
+  for format_dir in "${format_dirs[@]}"; do
+    if [[ -n $format_dir ]]; then
+      maybe_format_file="${format_dir}/${format}.nix"
+
+      if [[ -f "$maybe_format_file" ]]; then
+        ref_var="$maybe_format_file"
+        return
+      fi
+    fi
+  done
+
+  abort "unable to locate file for format: $format"
 }
 
 abort() {
@@ -107,11 +175,15 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     -f | --format)
-      format_path=$format_dir/$2.nix
+      format="$2"
       shift
       ;;
     --format-path)
       format_path=$2
+      shift
+      ;;
+    --format-search-path)
+      format_dirs=("$2" "${format_dirs[@]}")
       shift
       ;;
     --help)
@@ -119,15 +191,17 @@ while [[ $# -gt 0 ]]; do
       exit
       ;;
     --list)
-      listFormats
-      exit
+      list_formats=true
+      show_format_search_path=false
+      ;;
+    --show-format-search-path)
+      list_formats=false
+      show_format_search_path=true
       ;;
     --run)
       run=1
       # default to the VM format
-      if [[ -z $format_path ]]; then
-        format_path=$format_dir/vm.nix
-      fi
+      format="${format:-vm}"
       ;;
     --show-trace)
       nix_args+=(--show-trace)
@@ -152,12 +226,24 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
+if $list_formats; then
+  listFormats
+  exit
+elif $show_format_search_path; then
+  showFormatSearchPath
+  exit
+fi
+
 if ! $has_outlink; then
   nix_build_args+=(--no-link)
 fi
 
 if [[ -z $format_path ]]; then
-  abort "missing format. use --help for more details"
+  if [[ -n $format ]] ;then
+    findFormat "$format" format_path
+  else
+    abort "missing format. use --help for more details"
+  fi
 fi
 
 if [[ ! -f $format_path ]]; then
