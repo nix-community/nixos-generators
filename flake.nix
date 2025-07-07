@@ -136,6 +136,9 @@
                 test-customize-format = import ./checks/test-customize-format.nix {
                   inherit nixpkgs system;
                 };
+                test-format-search-path = import ./checks/test-format-search-path.nix {
+                  inherit nixpkgs self system;
+                };
               in
                 lib.mapAttrs makeLazyDrv (
                   {
@@ -144,7 +147,7 @@
                       nixos-generate
                       ;
 
-                    inherit test-customize-format;
+                    inherit test-customize-format test-format-search-path;
 
                     is-formatted = import ./checks/is-formatted.nix {
                       pkgs = nixpkgs.legacyPackages.${system};

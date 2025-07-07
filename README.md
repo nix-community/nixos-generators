@@ -320,14 +320,14 @@ multiple custom formats.  `nixosGenerate` will then match against these custom f
           # ./configuration.nix
         ];
         format = "vmware";
-        
+
         # optional arguments:
         # explicit nixpkgs and lib:
         # pkgs = nixpkgs.legacyPackages.x86_64-linux;
         # lib = nixpkgs.legacyPackages.x86_64-linux.lib;
         # additional arguments to pass to modules:
         # specialArgs = { myExtraArg = "foobar"; };
-        
+
         # you can also define your own custom formats
         # customFormats = { "myFormat" = <myFormatModule>; ... };
         # format = "myFormat";
@@ -350,6 +350,46 @@ multiple custom formats.  `nixosGenerate` will then match against these custom f
 * By default, grub will timeout after 1 second. To extend this, set `boot.loader.timeout = 5;` (or longer)
 * If boot fails for some reason, you will not get a recovery shell unless the root user is enabled, which you can do by setting a password for them (`users.users.root.password = "something";`, possibly `users.mutableUsers = true;` so you can interactively change the passwords after boot)
 * After booting, if you intend to use `nixos-switch`, consider using `nixos-generate-config`.
+
+## Using custom formats
+
+You can choose a format by telling `nixos-generate` its full path:
+
+```console
+nixos-generate --format-path ./path/to/my-format.nix
+```
+
+Additionally, you can tell `nixos-generate` where to search for format files by
+
+* Adding `:`-separated paths to the `NIXOS_GENERATORS_FORMAT_SEARCH_PATH`
+  environment variable, or
+* Calling `nixos-generate` with one or more `--format-search-path <path>`
+  options.
+
+Example:
+
+```console
+NIXOS_GENERATORS_FORMAT_SEARCH_PATH=/path/a:/path/b nixos-generate --format-search-path /path/c --format-search-path /path/d -f my-format
+```
+
+The above command searches for the file `my-format.nix` in the following paths,
+in order from highest precedence to lowest:
+
+1. `/path/d/my-format.nix`
+2. `/path/c/my-format.nix`
+3. `/path/a/my-format.nix`
+4. `/path/b/my-format.nix`
+5. `my-format.nix` in the builtin `nixos-generate` format directory
+
+Note that:
+
+* `nixos-generate` does not recognize a mechanism for escaping `:` characters
+  in paths specified in `NIXOS_GENERATORS_FORMAT_SEARCH_PATH`; if you have
+  custom formats that live in a path that contains `:`, specify the path with
+  `--format-search-path ./path/that/contains/a:or/two:`.
+* `nixos-generate` ignores empty strings in the list of format search paths
+  (`nixos-generate --format-search-path ''`).
+* Format names cannot be empty and cannot contain `/` elements.
 
 ### License
 
