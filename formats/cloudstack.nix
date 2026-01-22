@@ -6,23 +6,9 @@
   ...
 }: {
   imports = [
-    "${toString modulesPath}/virtualisation/cloudstack-config.nix"
+    "${toString modulesPath}/../maintainers/scripts/cloudstack/cloudstack-image.nix"
   ];
 
   fileSystems."/".fsType = lib.mkDefault "ext4";
-
-  system.build.cloudstackImage = import "${toString modulesPath}/../lib/make-disk-image.nix" {
-    inherit lib config pkgs;
-    inherit (config.virtualisation) diskSize;
-    format = "qcow2";
-    configFile =
-      pkgs.writeText "configuration.nix"
-      ''
-        {
-          imports = [ "${toString modulesPath}/virtualisation/cloudstack-config.nix" ];
-        }
-      '';
-  };
-
   formatAttr = "cloudstackImage";
 }
