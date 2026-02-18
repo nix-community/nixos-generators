@@ -4,7 +4,10 @@
   pkgs,
   modulesPath,
   ...
-}: {
+}:
+let
+  contents = specialArgs.qcow.contents or [];
+in {
   # for virtio kernel drivers
   imports = [
     "${toString modulesPath}/profiles/qemu-guest.nix"
@@ -32,6 +35,7 @@
     inherit (config.virtualisation) diskSize;
     format = "qcow2";
     partitionTableType = "hybrid";
+    contents = contents;
   };
 
   formatAttr = "qcow";
